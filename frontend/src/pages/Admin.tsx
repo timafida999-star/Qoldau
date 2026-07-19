@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Check, ShieldAlert, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { adminDeleteListing, fetchAdminReports, resolveReport } from "@/api/reports";
 import { Badge } from "@/components/ui/badge";
@@ -8,14 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Report } from "@/types";
 
-const REASON_LABELS: Record<Report["reason"], string> = {
-  spam: "Spam",
-  inappropriate: "Inappropriate content",
-  fraud: "Fraud or scam",
-  other: "Other",
-};
-
 export default function AdminPage() {
+  const { t } = useTranslation();
   const [reports, setReports] = useState<Report[]>([]);
   const [tab, setTab] = useState<"open" | "resolved">("open");
   const [loading, setLoading] = useState(true);
@@ -47,7 +42,7 @@ export default function AdminPage() {
   }
 
   async function handleDeleteListing(report: Report) {
-    if (!confirm("Delete this listing? This cannot be undone.")) return;
+    if (!confirm(t("admin.confirmDelete"))) return;
     setBusyId(report.id);
     try {
       await adminDeleteListing(report.target_id);
@@ -62,7 +57,7 @@ export default function AdminPage() {
     <div className="container max-w-3xl py-10">
       <h1 className="mb-6 flex items-center gap-2 text-2xl font-semibold">
         <ShieldAlert className="h-6 w-6 text-primary" />
-        Admin — Reports
+        {t("admin.title")}
       </h1>
 
       <div className="mb-6 flex gap-2">
@@ -72,7 +67,7 @@ export default function AdminPage() {
             tab === "open" ? "bg-accent text-primary" : "text-muted-foreground hover:bg-secondary"
           }`}
         >
-          Open
+          {t("admin.open")}
         </button>
         <button
           onClick={() => setTab("resolved")}
@@ -80,15 +75,15 @@ export default function AdminPage() {
             tab === "resolved" ? "bg-accent text-primary" : "text-muted-foreground hover:bg-secondary"
           }`}
         >
-          Resolved
+          {t("admin.resolved")}
         </button>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       ) : reports.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">
-          No {tab} reports.
+          {tab === "open" ? t("admin.emptyOpen") : t("admin.emptyResolved")}
         </p>
       ) : (
         <div className="space-y-4">
@@ -98,11 +93,11 @@ export default function AdminPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline">{report.target_type}</Badge>
-                      <Badge variant="secondary">{REASON_LABELS[report.reason]}</Badge>
+                      <Badge variant="outline">{t(`targetType.${report.target_type}`)}</Badge>
+                      <Badge variant="secondary">{t(`reportReason.${report.reason}`)}</Badge>
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Reported by {report.reporter.full_name} &middot;{" "}
+                      {t("admin.reportedBy", { name: report.reporter.full_name })} &middot;{" "}
                       {new Date(report.created_at).toLocaleDateString()}
                     </p>
                     {report.description && <p className="mt-2 text-sm text-foreground/90">{report.description}</p>}
@@ -110,7 +105,7 @@ export default function AdminPage() {
                       to={report.target_type === "listing" ? `/listings/${report.target_id}` : `/profile/${report.target_id}`}
                       className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
                     >
-                      View {report.target_type}
+                      {report.target_type === "listing" ? t("admin.viewListing") : t("admin.viewUser")}
                     </Link>
                   </div>
                 </div>
@@ -119,7 +114,7 @@ export default function AdminPage() {
                   <div className="flex gap-2 border-t border-border pt-3">
                     <Button size="sm" disabled={busyId === report.id} onClick={() => handleResolve(report.id)}>
                       <Check className="mr-1 h-4 w-4" />
-                      Resolve
+                      {t("admin.resolve")}
                     </Button>
                     {report.target_type === "listing" && (
                       <Button
@@ -129,7 +124,7 @@ export default function AdminPage() {
                         onClick={() => handleDeleteListing(report)}
                       >
                         <Trash2 className="mr-1 h-4 w-4" />
-                        Delete listing
+                        {t("admin.deleteListing")}
                       </Button>
                     )}
                   </div>

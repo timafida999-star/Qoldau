@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ImageOff, MapPin, Pencil, Star, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { API_BASE_URL } from "@/api/client";
 import { deleteListing, fetchListing } from "@/api/listings";
@@ -11,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ReportModal } from "@/components/ReportModal";
 import { useAuth } from "@/hooks/useAuth";
 import type { Listing } from "@/types";
-import { CATEGORY_LABELS, CONDITION_LABELS, STATUS_BADGE_VARIANT, STATUS_LABELS } from "@/utils/listingOptions";
+import { STATUS_BADGE_VARIANT } from "@/utils/listingOptions";
 
 import "@/lib/leafletIcons";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
@@ -20,6 +21,7 @@ export default function ListingDetailPage() {
   const { listingId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [activeImage, setActiveImage] = useState(0);
@@ -37,7 +39,7 @@ export default function ListingDetailPage() {
 
   async function handleDelete() {
     if (!listing) return;
-    if (!confirm("Delete this listing? This cannot be undone.")) return;
+    if (!confirm(t("listing.confirmDelete"))) return;
     await deleteListing(listing.id);
     navigate("/");
   }
@@ -50,18 +52,18 @@ export default function ListingDetailPage() {
       await createReservation(listing.id);
       setReserveSent(true);
     } catch (err: any) {
-      setReserveError(err?.response?.data?.detail || "Could not send the request. Please try again.");
+      setReserveError(err?.response?.data?.detail || t("listing.reserveError"));
     } finally {
       setReserving(false);
     }
   }
 
   if (loading) {
-    return <div className="container py-16 text-center text-muted-foreground">Loading...</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("common.loading")}</div>;
   }
 
   if (!listing) {
-    return <div className="container py-16 text-center text-muted-foreground">Listing not found.</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("listing.notFound")}</div>;
   }
 
   const isOwner = user?.id === listing.owner_id;
@@ -100,13 +102,13 @@ export default function ListingDetailPage() {
         <div>
           <div className="flex items-start justify-between gap-3">
             <h1 className="text-2xl font-semibold">{listing.title}</h1>
-            <Badge variant={STATUS_BADGE_VARIANT[listing.status]}>{STATUS_LABELS[listing.status]}</Badge>
+            <Badge variant={STATUS_BADGE_VARIANT[listing.status]}>{t(`status.${listing.status}`)}</Badge>
           </div>
 
           <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{CATEGORY_LABELS[listing.category]}</span>
+            <span>{t(`category.${listing.category}`)}</span>
             <span>&middot;</span>
-            <span>{CONDITION_LABELS[listing.condition]}</span>
+            <span>{t(`condition.${listing.condition}`)}</span>
           </div>
 
           <p className="mt-4 whitespace-pre-line text-foreground/90">{listing.description}</p>
@@ -141,35 +143,35 @@ export default function ListingDetailPage() {
               <>
                 <Button variant="outline" onClick={() => navigate(`/listings/${listing.id}/edit`)}>
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t("common.edit")}
                 </Button>
                 <Button variant="destructive" onClick={handleDelete}>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  {t("common.delete")}
                 </Button>
               </>
             ) : listing.status === "available" ? (
               user ? (
                 <Button size="lg" disabled={reserving || reserveSent} onClick={handleReserve}>
-                  {reserveSent ? "Request sent" : reserving ? "Sending..." : "Reserve this item"}
+                  {reserveSent ? t("listing.requestSent") : reserving ? t("listing.sending") : t("listing.reserve")}
                 </Button>
               ) : (
                 <Button size="lg" onClick={() => navigate("/login")}>
-                  Log in to reserve
+                  {t("listing.loginToReserve")}
                 </Button>
               )
             ) : (
               <Button size="lg" disabled>
-                No longer available
+                {t("listing.noLongerAvailable")}
               </Button>
             )}
           </div>
           {reserveError && <p className="mt-2 text-sm text-destructive">{reserveError}</p>}
           {reserveSent && (
             <p className="mt-2 text-sm text-muted-foreground">
-              Track it on your{" "}
+              {t("listing.trackPrefix")}{" "}
               <Link to="/reservations" className="font-medium text-primary hover:underline">
-                reservations page
+                {t("listing.reservationsPage")}
               </Link>
               .
             </p>
@@ -177,7 +179,7 @@ export default function ListingDetailPage() {
 
           {!isOwner && user && (
             <div className="mt-4">
-              <ReportModal targetType="listing" targetId={listing.id} triggerLabel="Report this listing" />
+              <ReportModal targetType="listing" targetId={listing.id} triggerLabel={t("listing.reportListing")} />
             </div>
           )}
         </div>
@@ -186,7 +188,7 @@ export default function ListingDetailPage() {
       <div className="mt-10">
         <h2 className="mb-3 flex items-center gap-2 text-lg font-medium">
           <MapPin className="h-5 w-5 text-primary" />
-          Meeting location
+          {t("listing.meetingLocation")}
         </h2>
         {listing.address_text && <p className="mb-3 text-sm text-muted-foreground">{listing.address_text}</p>}
         <div className="overflow-hidden rounded-xl border border-border shadow-soft">

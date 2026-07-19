@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Check, MessageCircle, QrCode, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { actOnReservation, listMyReservations } from "@/api/reservations";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ const STATUS_VARIANT: Record<Reservation["status"], "default" | "secondary" | "o
 
 export default function ReservationsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [tab, setTab] = useState<"received" | "sent">("received");
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export default function ReservationsPage() {
 
   return (
     <div className="container max-w-3xl py-10">
-      <h1 className="mb-6 text-2xl font-semibold">My reservations</h1>
+      <h1 className="mb-6 text-2xl font-semibold">{t("reservations.title")}</h1>
 
       <div className="mb-6 flex gap-2">
         <button
@@ -59,7 +61,7 @@ export default function ReservationsPage() {
             tab === "received" ? "bg-accent text-primary" : "text-muted-foreground hover:bg-secondary"
           }`}
         >
-          Requests received
+          {t("reservations.received")}
         </button>
         <button
           onClick={() => setTab("sent")}
@@ -67,15 +69,15 @@ export default function ReservationsPage() {
             tab === "sent" ? "bg-accent text-primary" : "text-muted-foreground hover:bg-secondary"
           }`}
         >
-          Requests sent
+          {t("reservations.sent")}
         </button>
       </div>
 
       {loading ? (
-        <p className="text-muted-foreground">Loading...</p>
+        <p className="text-muted-foreground">{t("common.loading")}</p>
       ) : filtered.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">
-          Nothing here yet.
+          {t("reservations.empty")}
         </p>
       ) : (
         <div className="space-y-4">
@@ -88,11 +90,13 @@ export default function ReservationsPage() {
                   </Link>
                   <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                     {tab === "received" ? (
-                      <span>from {reservation.requester.full_name}</span>
+                      <span>{t("reservations.from", { name: reservation.requester.full_name })}</span>
                     ) : (
-                      <span>requested by you</span>
+                      <span>{t("reservations.requestedByYou")}</span>
                     )}
-                    <Badge variant={STATUS_VARIANT[reservation.status]}>{reservation.status}</Badge>
+                    <Badge variant={STATUS_VARIANT[reservation.status]}>
+                      {t(`reservationStatus.${reservation.status}`)}
+                    </Badge>
                   </div>
                 </div>
 
@@ -105,7 +109,7 @@ export default function ReservationsPage() {
                         onClick={() => handleAction(reservation, "accept")}
                       >
                         <Check className="mr-1 h-4 w-4" />
-                        Accept
+                        {t("reservations.accept")}
                       </Button>
                       <Button
                         size="sm"
@@ -114,7 +118,7 @@ export default function ReservationsPage() {
                         onClick={() => handleAction(reservation, "decline")}
                       >
                         <X className="mr-1 h-4 w-4" />
-                        Decline
+                        {t("reservations.decline")}
                       </Button>
                     </>
                   )}
@@ -125,19 +129,19 @@ export default function ReservationsPage() {
                       disabled={actingId === reservation.id}
                       onClick={() => handleAction(reservation, "cancel")}
                     >
-                      Cancel
+                      {t("reservations.cancel")}
                     </Button>
                   )}
                   {reservation.status === "accepted" && reservation.chat_id && (
                     <Button size="sm" variant="secondary" onClick={() => navigate(`/chats/${reservation.chat_id}`)}>
                       <MessageCircle className="mr-1 h-4 w-4" />
-                      Open chat
+                      {t("reservations.openChat")}
                     </Button>
                   )}
                   {reservation.status === "accepted" && reservation.exchange_id && (
                     <Button size="sm" variant="outline" onClick={() => navigate(`/exchanges/${reservation.exchange_id}`)}>
                       <QrCode className="mr-1 h-4 w-4" />
-                      {tab === "received" ? "Show QR" : "Confirm exchange"}
+                      {tab === "received" ? t("reservations.showQr") : t("reservations.confirmExchange")}
                     </Button>
                   )}
                 </div>

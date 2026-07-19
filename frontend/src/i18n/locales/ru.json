@@ -1,0 +1,230 @@
+{
+  "language": {
+    "label": "Язык",
+    "en": "English",
+    "ru": "Русский",
+    "kk": "Қазақша"
+  },
+  "nav": {
+    "giveItem": "Отдать вещь",
+    "reservations": "Брони",
+    "admin": "Админ",
+    "logout": "Выйти",
+    "login": "Войти",
+    "signup": "Регистрация"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "saving": "Сохранение...",
+    "saveChanges": "Сохранить изменения",
+    "cancel": "Отмена",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "somethingWrong": "Что-то пошло не так. Попробуйте ещё раз."
+  },
+  "auth": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Пароль",
+    "fullNameLabel": "Имя и фамилия",
+    "namePlaceholder": "Айгерим Бекова",
+    "loginTitle": "С возвращением",
+    "loginSubtitle": "Войдите, чтобы бронировать и отдавать вещи.",
+    "loginSubmit": "Войти",
+    "loggingIn": "Вход...",
+    "loginFailed": "Не удалось войти. Попробуйте ещё раз.",
+    "noAccount": "Нет аккаунта?",
+    "registerTitle": "Создайте аккаунт",
+    "registerSubtitle": "Присоединяйтесь к Qoldau и дайте вещам вторую жизнь.",
+    "registerSubmit": "Зарегистрироваться",
+    "creatingAccount": "Создание аккаунта...",
+    "registerFailed": "Не удалось зарегистрироваться. Попробуйте ещё раз.",
+    "haveAccount": "Уже есть аккаунт?",
+    "invalidEmail": "Введите корректный email",
+    "shortPassword": "Пароль должен содержать не менее 6 символов",
+    "enterFullName": "Введите имя и фамилию"
+  },
+  "home": {
+    "title": "Найдите что-то полезное рядом",
+    "subtitle": "Здесь всё бесплатно. Забронируйте, встретьтесь, готово.",
+    "getStarted": "Начать",
+    "allCategories": "Все категории",
+    "allStatuses": "Все статусы",
+    "grid": "Сетка",
+    "map": "Карта",
+    "loading": "Загрузка объявлений...",
+    "empty": "Пока нет объявлений по этим фильтрам."
+  },
+  "createListing": {
+    "title": "Отдать вещь"
+  },
+  "editListing": {
+    "title": "Редактировать объявление"
+  },
+  "listing": {
+    "notFound": "Объявление не найдено.",
+    "confirmDelete": "Удалить это объявление? Это действие необратимо.",
+    "reserveError": "Не удалось отправить запрос. Попробуйте ещё раз.",
+    "requestSent": "Запрос отправлен",
+    "sending": "Отправка...",
+    "reserve": "Забронировать вещь",
+    "loginToReserve": "Войдите, чтобы забронировать",
+    "noLongerAvailable": "Больше недоступно",
+    "trackPrefix": "Отслеживайте на странице",
+    "reservationsPage": "ваших броней",
+    "reportListing": "Пожаловаться на объявление",
+    "meetingLocation": "Место встречи"
+  },
+  "form": {
+    "title": "Название",
+    "titlePlaceholder": "Деревянная книжная полка, почти новая",
+    "description": "Описание",
+    "descriptionPlaceholder": "Опишите состояние, размер и детали передачи вещи",
+    "category": "Категория",
+    "condition": "Состояние",
+    "addressLabel": "Адрес (необязательная заметка)",
+    "addressPlaceholder": "например, рядом с Mega Silk Way",
+    "location": "Местоположение",
+    "photos": "Фотографии",
+    "publish": "Опубликовать объявление",
+    "clickMap": "Нажмите на карту, чтобы указать место встречи.",
+    "shortTitle": "Название должно содержать не менее 3 символов",
+    "shortDescription": "Описание должно содержать не менее 10 символов"
+  },
+  "reservations": {
+    "title": "Мои брони",
+    "received": "Полученные запросы",
+    "sent": "Отправленные запросы",
+    "empty": "Пока здесь пусто.",
+    "from": "от {{name}}",
+    "requestedByYou": "запрошено вами",
+    "accept": "Принять",
+    "decline": "Отклонить",
+    "cancel": "Отменить",
+    "openChat": "Открыть чат",
+    "showQr": "Показать QR",
+    "confirmExchange": "Подтвердить передачу"
+  },
+  "chat": {
+    "loading": "Загрузка чата...",
+    "notFound": "Чат не найден.",
+    "about": "О вещи: {{title}}",
+    "connected": "Подключено",
+    "connecting": "Подключение...",
+    "placeholder": "Напишите сообщение..."
+  },
+  "exchange": {
+    "notFound": "Передача не найдена.",
+    "completedTitle": "Передача завершена",
+    "completedBody": "«{{title}}» передана. Спасибо, что пользуетесь Qoldau!",
+    "leaveReview": "Оставить отзыв",
+    "ownerInstruction": "Покажите этот QR-код тому, кто забирает вещь. Он отсканирует его, чтобы подтвердить передачу.",
+    "loadingQr": "Загрузка QR...",
+    "recipientInstruction": "Отсканируйте QR-код владельца, чтобы подтвердить получение вещи.",
+    "orManual": "ИЛИ ВВЕДИТЕ КОД ВРУЧНУЮ",
+    "confirmationCode": "Код подтверждения",
+    "codePlaceholder": "Вставьте или введите код",
+    "confirming": "Подтверждение...",
+    "confirmExchange": "Подтвердить передачу",
+    "codeMismatch": "Код не совпадает. Попробуйте ещё раз.",
+    "qrAlt": "QR-код передачи"
+  },
+  "qrScanner": {
+    "cameraError": "Не удалось получить доступ к камере. Вы можете ввести код вручную.",
+    "stopCamera": "Остановить камеру",
+    "scanCamera": "Сканировать камерой"
+  },
+  "review": {
+    "thanksTitle": "Спасибо за отзыв!",
+    "viewProfile": "Открыть профиль {{name}}",
+    "title": "Оцените опыт",
+    "subtitle": "Как прошла передача «{{listing}}» с {{name}}?",
+    "rating": "Оценка",
+    "commentLabel": "Комментарий (необязательно)",
+    "commentPlaceholder": "Расскажите, как прошла передача",
+    "submitting": "Отправка...",
+    "submit": "Отправить отзыв",
+    "error": "Не удалось отправить отзыв. Попробуйте ещё раз."
+  },
+  "report": {
+    "trigger": "Пожаловаться",
+    "reportListing": "Пожаловаться на объявление",
+    "reportUser": "Пожаловаться на пользователя",
+    "titleListing": "Жалоба на объявление",
+    "titleUser": "Жалоба на пользователя",
+    "reason": "Причина",
+    "details": "Подробности (необязательно)",
+    "detailsPlaceholder": "Что произошло?",
+    "submit": "Отправить жалобу",
+    "submitting": "Отправка...",
+    "thanks": "Спасибо, что сообщили. Наша команда всё проверит.",
+    "error": "Не удалось отправить жалобу. Попробуйте ещё раз."
+  },
+  "profile": {
+    "notFound": "Пользователь не найден.",
+    "reviewsSuffix": "отзывов",
+    "changePhoto": "Изменить фото",
+    "uploading": "Загрузка...",
+    "reportUser": "Пожаловаться на пользователя",
+    "editProfile": "Редактировать профиль",
+    "fullName": "Имя и фамилия",
+    "phone": "Телефон",
+    "phonePlaceholder": "+7 700 000 0000",
+    "bio": "О себе",
+    "bioPlaceholder": "Расскажите немного о себе",
+    "updated": "Профиль обновлён.",
+    "reviewsTitle": "Отзывы ({{count}})",
+    "noReviews": "Пока нет отзывов.",
+    "enterFullName": "Введите имя и фамилию"
+  },
+  "admin": {
+    "title": "Админ — Жалобы",
+    "open": "Открытые",
+    "resolved": "Решённые",
+    "emptyOpen": "Нет открытых жалоб.",
+    "emptyResolved": "Нет решённых жалоб.",
+    "reportedBy": "Отправитель: {{name}}",
+    "viewListing": "Открыть объявление",
+    "viewUser": "Открыть пользователя",
+    "resolve": "Решить",
+    "deleteListing": "Удалить объявление",
+    "confirmDelete": "Удалить это объявление? Это действие необратимо."
+  },
+  "category": {
+    "electronics": "Электроника",
+    "furniture": "Мебель",
+    "clothes": "Одежда",
+    "books": "Книги",
+    "kitchen": "Кухня",
+    "kids": "Детское",
+    "other": "Другое"
+  },
+  "condition": {
+    "new": "Новое",
+    "like_new": "Как новое",
+    "good": "Хорошее",
+    "fair": "Удовлетворительное",
+    "worn": "Изношенное"
+  },
+  "status": {
+    "available": "Доступно",
+    "reserved": "Забронировано",
+    "completed": "Завершено"
+  },
+  "reservationStatus": {
+    "pending": "Ожидает",
+    "accepted": "Принято",
+    "declined": "Отклонено",
+    "cancelled": "Отменено"
+  },
+  "reportReason": {
+    "spam": "Спам",
+    "inappropriate": "Неприемлемый контент",
+    "fraud": "Мошенничество",
+    "other": "Другое"
+  },
+  "targetType": {
+    "listing": "объявление",
+    "user": "пользователя"
+  }
+}

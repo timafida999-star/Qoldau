@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Star, Upload } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { API_BASE_URL } from "@/api/client";
@@ -18,13 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/useAuth";
 import type { PublicUser, Review } from "@/types";
 
-const profileSchema = z.object({
-  full_name: z.string().min(2, "Enter your full name"),
-  phone: z.string().optional(),
-  bio: z.string().optional(),
-});
-
-type ProfileForm = z.infer<typeof profileSchema>;
+type ProfileForm = { full_name: string; phone?: string; bio?: string };
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", year: "numeric" });
@@ -33,7 +28,14 @@ function formatDate(iso: string) {
 export default function ProfilePage() {
   const { userId } = useParams();
   const { user: viewer, refreshUser } = useAuth();
+  const { t } = useTranslation();
   const isOwnProfile = Boolean(viewer && viewer.id === userId);
+
+  const profileSchema = z.object({
+    full_name: z.string().min(2, t("profile.enterFullName")),
+    phone: z.string().optional(),
+    bio: z.string().optional(),
+  });
 
   const [profile, setProfile] = useState<PublicUser | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -76,7 +78,7 @@ export default function ProfilePage() {
     await updateMe(values);
     await refreshUser();
     await load();
-    setSaveMessage("Profile updated.");
+    setSaveMessage(t("profile.updated"));
   }
 
   async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -93,11 +95,11 @@ export default function ProfilePage() {
   }
 
   if (loading) {
-    return <div className="container py-16 text-center text-muted-foreground">Loading...</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("common.loading")}</div>;
   }
 
   if (!profile) {
-    return <div className="container py-16 text-center text-muted-foreground">User not found.</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("profile.notFound")}</div>;
   }
 
   const avatarSrc = profile.avatar_url ? `${API_BASE_URL}${profile.avatar_url}` : undefined;
@@ -118,19 +120,19 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-semibold">{profile.full_name}</h1>
           <div className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            {profile.rating_avg.toFixed(1)} ({profile.rating_count} reviews)
+            {profile.rating_avg.toFixed(1)} ({profile.rating_count} {t("profile.reviewsSuffix")})
           </div>
           {profile.bio && <p className="mt-2 max-w-md text-sm text-foreground/80">{profile.bio}</p>}
           {isOwnProfile && (
             <label className="mt-3 inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-primary hover:underline">
               <Upload className="h-4 w-4" />
-              {avatarUploading ? "Uploading..." : "Change photo"}
+              {avatarUploading ? t("profile.uploading") : t("profile.changePhoto")}
               <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
             </label>
           )}
           {!isOwnProfile && viewer && (
             <div className="mt-3">
-              <ReportModal targetType="user" targetId={profile.id} triggerLabel="Report this user" />
+              <ReportModal targetType="user" targetId={profile.id} triggerLabel={t("profile.reportUser")} />
             </div>
           )}
         </div>
@@ -139,26 +141,26 @@ export default function ProfilePage() {
       {isOwnProfile && (
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>Edit profile</CardTitle>
+            <CardTitle>{t("profile.editProfile")}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="full_name">Full name</Label>
+                <Label htmlFor="full_name">{t("profile.fullName")}</Label>
                 <Input id="full_name" {...register("full_name")} />
                 {errors.full_name && <p className="text-sm text-destructive">{errors.full_name.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" placeholder="+7 700 000 0000" {...register("phone")} />
+                <Label htmlFor="phone">{t("profile.phone")}</Label>
+                <Input id="phone" placeholder={t("profile.phonePlaceholder")} {...register("phone")} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea id="bio" placeholder="Tell others a bit about yourself" {...register("bio")} />
+                <Label htmlFor="bio">{t("profile.bio")}</Label>
+                <Textarea id="bio" placeholder={t("profile.bioPlaceholder")} {...register("bio")} />
               </div>
               {saveMessage && <p className="text-sm text-primary">{saveMessage}</p>}
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save changes"}
+                {isSubmitting ? t("common.saving") : t("common.saveChanges")}
               </Button>
             </form>
           </CardContent>
@@ -166,10 +168,10 @@ export default function ProfilePage() {
       )}
 
       <div>
-        <h2 className="mb-4 text-lg font-medium">Reviews ({reviews.length})</h2>
+        <h2 className="mb-4 text-lg font-medium">{t("profile.reviewsTitle", { count: reviews.length })}</h2>
         {reviews.length === 0 ? (
           <p className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
-            No reviews yet.
+            {t("profile.noReviews")}
           </p>
         ) : (
           <div className="space-y-3">

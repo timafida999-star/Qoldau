@@ -1,0 +1,230 @@
+{
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ru": "Русский",
+    "kk": "Қазақша"
+  },
+  "nav": {
+    "giveItem": "Give an item",
+    "reservations": "Reservations",
+    "admin": "Admin",
+    "logout": "Log out",
+    "login": "Log in",
+    "signup": "Sign up"
+  },
+  "common": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "somethingWrong": "Something went wrong. Please try again."
+  },
+  "auth": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "fullNameLabel": "Full name",
+    "namePlaceholder": "Aigerim Bekova",
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Log in to reserve and give away items.",
+    "loginSubmit": "Log in",
+    "loggingIn": "Logging in...",
+    "loginFailed": "Login failed. Please try again.",
+    "noAccount": "Don't have an account?",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Join Qoldau and start giving items a second life.",
+    "registerSubmit": "Sign up",
+    "creatingAccount": "Creating account...",
+    "registerFailed": "Registration failed. Please try again.",
+    "haveAccount": "Already have an account?",
+    "invalidEmail": "Enter a valid email",
+    "shortPassword": "Password must be at least 6 characters",
+    "enterFullName": "Enter your full name"
+  },
+  "home": {
+    "title": "Find something useful nearby",
+    "subtitle": "Everything here is free. Reserve it, meet up, done.",
+    "getStarted": "Get started",
+    "allCategories": "All categories",
+    "allStatuses": "All statuses",
+    "grid": "Grid",
+    "map": "Map",
+    "loading": "Loading listings...",
+    "empty": "No listings match these filters yet."
+  },
+  "createListing": {
+    "title": "Give an item away"
+  },
+  "editListing": {
+    "title": "Edit listing"
+  },
+  "listing": {
+    "notFound": "Listing not found.",
+    "confirmDelete": "Delete this listing? This cannot be undone.",
+    "reserveError": "Could not send the request. Please try again.",
+    "requestSent": "Request sent",
+    "sending": "Sending...",
+    "reserve": "Reserve this item",
+    "loginToReserve": "Log in to reserve",
+    "noLongerAvailable": "No longer available",
+    "trackPrefix": "Track it on your",
+    "reservationsPage": "reservations page",
+    "reportListing": "Report this listing",
+    "meetingLocation": "Meeting location"
+  },
+  "form": {
+    "title": "Title",
+    "titlePlaceholder": "Wooden bookshelf, barely used",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the item's condition, size, and pickup details",
+    "category": "Category",
+    "condition": "Condition",
+    "addressLabel": "Address (optional note)",
+    "addressPlaceholder": "e.g. near Mega Silk Way",
+    "location": "Location",
+    "photos": "Photos",
+    "publish": "Publish listing",
+    "clickMap": "Click the map to set the meeting location.",
+    "shortTitle": "Title must be at least 3 characters",
+    "shortDescription": "Description must be at least 10 characters"
+  },
+  "reservations": {
+    "title": "My reservations",
+    "received": "Requests received",
+    "sent": "Requests sent",
+    "empty": "Nothing here yet.",
+    "from": "from {{name}}",
+    "requestedByYou": "requested by you",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "openChat": "Open chat",
+    "showQr": "Show QR",
+    "confirmExchange": "Confirm exchange"
+  },
+  "chat": {
+    "loading": "Loading chat...",
+    "notFound": "Chat not found.",
+    "about": "About: {{title}}",
+    "connected": "Connected",
+    "connecting": "Connecting...",
+    "placeholder": "Write a message..."
+  },
+  "exchange": {
+    "notFound": "Exchange not found.",
+    "completedTitle": "Exchange completed",
+    "completedBody": "\"{{title}}\" has been handed off. Thanks for using Qoldau!",
+    "leaveReview": "Leave a review",
+    "ownerInstruction": "Show this QR code to the person picking up your item. They'll scan it to confirm the handoff.",
+    "loadingQr": "Loading QR...",
+    "recipientInstruction": "Scan the QR code shown by the owner to confirm you've received the item.",
+    "orManual": "OR ENTER THE CODE MANUALLY",
+    "confirmationCode": "Confirmation code",
+    "codePlaceholder": "Paste or type the code",
+    "confirming": "Confirming...",
+    "confirmExchange": "Confirm exchange",
+    "codeMismatch": "That code doesn't match. Please try again.",
+    "qrAlt": "Exchange QR code"
+  },
+  "qrScanner": {
+    "cameraError": "Could not access the camera. You can enter the code manually instead.",
+    "stopCamera": "Stop camera",
+    "scanCamera": "Scan with camera"
+  },
+  "review": {
+    "thanksTitle": "Thanks for the feedback!",
+    "viewProfile": "View {{name}}'s profile",
+    "title": "Rate your experience",
+    "subtitle": "How was exchanging \"{{listing}}\" with {{name}}?",
+    "rating": "Rating",
+    "commentLabel": "Comment (optional)",
+    "commentPlaceholder": "Share how the handoff went",
+    "submitting": "Submitting...",
+    "submit": "Submit review",
+    "error": "Could not submit your review. Please try again."
+  },
+  "report": {
+    "trigger": "Report",
+    "reportListing": "Report this listing",
+    "reportUser": "Report this user",
+    "titleListing": "Report listing",
+    "titleUser": "Report user",
+    "reason": "Reason",
+    "details": "Details (optional)",
+    "detailsPlaceholder": "What happened?",
+    "submit": "Submit report",
+    "submitting": "Submitting...",
+    "thanks": "Thanks for letting us know. Our team will take a look.",
+    "error": "Could not submit the report. Please try again."
+  },
+  "profile": {
+    "notFound": "User not found.",
+    "reviewsSuffix": "reviews",
+    "changePhoto": "Change photo",
+    "uploading": "Uploading...",
+    "reportUser": "Report this user",
+    "editProfile": "Edit profile",
+    "fullName": "Full name",
+    "phone": "Phone",
+    "phonePlaceholder": "+7 700 000 0000",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell others a bit about yourself",
+    "updated": "Profile updated.",
+    "reviewsTitle": "Reviews ({{count}})",
+    "noReviews": "No reviews yet.",
+    "enterFullName": "Enter your full name"
+  },
+  "admin": {
+    "title": "Admin — Reports",
+    "open": "Open",
+    "resolved": "Resolved",
+    "emptyOpen": "No open reports.",
+    "emptyResolved": "No resolved reports.",
+    "reportedBy": "Reported by {{name}}",
+    "viewListing": "View listing",
+    "viewUser": "View user",
+    "resolve": "Resolve",
+    "deleteListing": "Delete listing",
+    "confirmDelete": "Delete this listing? This cannot be undone."
+  },
+  "category": {
+    "electronics": "Electronics",
+    "furniture": "Furniture",
+    "clothes": "Clothes",
+    "books": "Books",
+    "kitchen": "Kitchen",
+    "kids": "Kids",
+    "other": "Other"
+  },
+  "condition": {
+    "new": "New",
+    "like_new": "Like new",
+    "good": "Good",
+    "fair": "Fair",
+    "worn": "Worn"
+  },
+  "status": {
+    "available": "Available",
+    "reserved": "Reserved",
+    "completed": "Completed"
+  },
+  "reservationStatus": {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "declined": "Declined",
+    "cancelled": "Cancelled"
+  },
+  "reportReason": {
+    "spam": "Spam",
+    "inappropriate": "Inappropriate content",
+    "fraud": "Fraud or scam",
+    "other": "Other"
+  },
+  "targetType": {
+    "listing": "listing",
+    "user": "user"
+  }
+}

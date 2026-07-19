@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { fetchExchange } from "@/api/exchanges";
 import { createReview } from "@/api/reviews";
@@ -15,6 +16,7 @@ import type { Exchange, PublicUser } from "@/types";
 export default function LeaveReviewPage() {
   const { exchangeId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [exchange, setExchange] = useState<Exchange | null>(null);
   const [reviewee, setReviewee] = useState<PublicUser | null>(null);
@@ -46,27 +48,27 @@ export default function LeaveReviewPage() {
       await createReview(exchangeId, rating, comment);
       setSubmitted(true);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || "Could not submit your review. Please try again.");
+      setError(err?.response?.data?.detail || t("review.error"));
     } finally {
       setSubmitting(false);
     }
   }
 
   if (loading) {
-    return <div className="container py-16 text-center text-muted-foreground">Loading...</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("common.loading")}</div>;
   }
 
   if (!exchange || !reviewee) {
-    return <div className="container py-16 text-center text-muted-foreground">Exchange not found.</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("exchange.notFound")}</div>;
   }
 
   if (submitted) {
     return (
       <div className="container max-w-lg py-16 text-center">
         <CheckCircle2 className="mx-auto mb-4 h-12 w-12 text-primary" />
-        <h1 className="text-2xl font-semibold">Thanks for the feedback!</h1>
+        <h1 className="text-2xl font-semibold">{t("review.thanksTitle")}</h1>
         <Button className="mt-6" onClick={() => navigate(`/profile/${reviewee.id}`)}>
-          View {reviewee.full_name}'s profile
+          {t("review.viewProfile", { name: reviewee.full_name })}
         </Button>
       </div>
     );
@@ -76,29 +78,29 @@ export default function LeaveReviewPage() {
     <div className="container max-w-lg py-12">
       <Card>
         <CardHeader>
-          <CardTitle>Rate your experience</CardTitle>
+          <CardTitle>{t("review.title")}</CardTitle>
           <p className="text-sm text-muted-foreground">
-            How was exchanging "{exchange.listing_title}" with {reviewee.full_name}?
+            {t("review.subtitle", { listing: exchange.listing_title, name: reviewee.full_name })}
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label>Rating</Label>
+              <Label>{t("review.rating")}</Label>
               <StarRating value={rating} onChange={setRating} size={28} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="comment">Comment (optional)</Label>
+              <Label htmlFor="comment">{t("review.commentLabel")}</Label>
               <Textarea
                 id="comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="Share how the handoff went"
+                placeholder={t("review.commentPlaceholder")}
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={rating === 0 || submitting}>
-              {submitting ? "Submitting..." : "Submit review"}
+              {submitting ? t("review.submitting") : t("review.submit")}
             </Button>
           </form>
         </CardContent>

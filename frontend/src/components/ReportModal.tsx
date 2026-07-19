@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Flag } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { createReport } from "@/api/reports";
 import { Button } from "@/components/ui/button";
@@ -9,12 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { ReportReason, ReportTargetType } from "@/types";
 
-const REASON_LABELS: Record<ReportReason, string> = {
-  spam: "Spam",
-  inappropriate: "Inappropriate content",
-  fraud: "Fraud or scam",
-  other: "Other",
-};
+const REASON_VALUES: ReportReason[] = ["spam", "inappropriate", "fraud", "other"];
 
 interface ReportModalProps {
   targetType: ReportTargetType;
@@ -22,7 +18,8 @@ interface ReportModalProps {
   triggerLabel?: string;
 }
 
-export function ReportModal({ targetType, targetId, triggerLabel = "Report" }: ReportModalProps) {
+export function ReportModal({ targetType, targetId, triggerLabel }: ReportModalProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<ReportReason>("spam");
   const [description, setDescription] = useState("");
@@ -45,7 +42,7 @@ export function ReportModal({ targetType, targetId, triggerLabel = "Report" }: R
       await createReport(targetType, targetId, reason, description);
       setSubmitted(true);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || "Could not submit the report. Please try again.");
+      setError(err?.response?.data?.detail || t("report.error"));
     } finally {
       setSubmitting(false);
     }
@@ -58,38 +55,42 @@ export function ReportModal({ targetType, targetId, triggerLabel = "Report" }: R
         className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-destructive"
       >
         <Flag className="h-3.5 w-3.5" />
-        {triggerLabel}
+        {triggerLabel ?? t("report.trigger")}
       </button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} title={`Report ${targetType}`}>
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        title={targetType === "listing" ? t("report.titleListing") : t("report.titleUser")}
+      >
         {submitted ? (
           <p className="text-sm text-muted-foreground">
-            Thanks for letting us know. Our team will take a look.
+            {t("report.thanks")}
           </p>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="reason">Reason</Label>
+              <Label htmlFor="reason">{t("report.reason")}</Label>
               <Select id="reason" value={reason} onChange={(e) => setReason(e.target.value as ReportReason)}>
-                {Object.entries(REASON_LABELS).map(([value, label]) => (
+                {REASON_VALUES.map((value) => (
                   <option key={value} value={value}>
-                    {label}
+                    {t(`reportReason.${value}`)}
                   </option>
                 ))}
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Details (optional)</Label>
+              <Label htmlFor="description">{t("report.details")}</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What happened?"
+                placeholder={t("report.detailsPlaceholder")}
               />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button className="w-full" onClick={handleSubmit} disabled={submitting}>
-              {submitting ? "Submitting..." : "Submit report"}
+              {submitting ? t("report.submitting") : t("report.submit")}
             </Button>
           </div>
         )}

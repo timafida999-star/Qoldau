@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Send } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { fetchChat, fetchMessages } from "@/api/chat";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ function formatTime(iso: string) {
 export default function ChatPage() {
   const { chatId } = useParams();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -55,11 +57,11 @@ export default function ChatPage() {
   }
 
   if (loading) {
-    return <div className="container py-16 text-center text-muted-foreground">Loading chat...</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("chat.loading")}</div>;
   }
 
   if (!chatInfo) {
-    return <div className="container py-16 text-center text-muted-foreground">Chat not found.</div>;
+    return <div className="container py-16 text-center text-muted-foreground">{t("chat.notFound")}</div>;
   }
 
   return (
@@ -67,10 +69,10 @@ export default function ChatPage() {
       <div className="mb-4 flex items-center justify-between border-b border-border pb-4">
         <div>
           <h1 className="font-semibold">{chatInfo.other_participant.full_name}</h1>
-          <p className="text-sm text-muted-foreground">About: {chatInfo.listing_title}</p>
+          <p className="text-sm text-muted-foreground">{t("chat.about", { title: chatInfo.listing_title })}</p>
         </div>
         <span className={`text-xs ${isConnected ? "text-primary" : "text-muted-foreground"}`}>
-          {isConnected ? "Connected" : "Connecting..."}
+          {isConnected ? t("chat.connected") : t("chat.connecting")}
         </span>
       </div>
 
@@ -99,7 +101,7 @@ export default function ChatPage() {
         <Input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Write a message..."
+          placeholder={t("chat.placeholder")}
           autoFocus
         />
         <Button type="submit" size="icon" disabled={!draft.trim()}>

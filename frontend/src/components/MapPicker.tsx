@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import { useTranslation } from "react-i18next";
 
 import "@/lib/leafletIcons";
 
@@ -19,6 +20,7 @@ function ClickHandler({ onChange }: { onChange: (lat: number, lng: number) => vo
 }
 
 export function MapPicker({ latitude, longitude, onChange }: MapPickerProps) {
+  const { t } = useTranslation();
   const [position, setPosition] = useState<[number, number]>([latitude, longitude]);
 
   function handleChange(lat: number, lng: number) {
@@ -37,7 +39,7 @@ export function MapPicker({ latitude, longitude, onChange }: MapPickerProps) {
         <ClickHandler onChange={handleChange} />
       </MapContainer>
       <p className="border-t border-border bg-secondary px-3 py-2 text-xs text-muted-foreground">
-        Click the map to set the meeting location.
+        {t("form.clickMap")}
       </p>
     </div>
   );

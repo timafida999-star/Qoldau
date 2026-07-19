@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import jsQR from "jsqr";
 import { Camera, CameraOff } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,6 +10,7 @@ interface QrScannerProps {
 }
 
 export function QrScanner({ onScan }: QrScannerProps) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -28,7 +30,7 @@ export function QrScanner({ onScan }: QrScannerProps) {
       setIsActive(true);
       tick();
     } catch {
-      setError("Could not access the camera. You can enter the code manually instead.");
+      setError(t("qrScanner.cameraError"));
     }
   }
 
@@ -87,12 +89,12 @@ export function QrScanner({ onScan }: QrScannerProps) {
         {isActive ? (
           <>
             <CameraOff className="mr-2 h-4 w-4" />
-            Stop camera
+            {t("qrScanner.stopCamera")}
           </>
         ) : (
           <>
             <Camera className="mr-2 h-4 w-4" />
-            Scan with camera
+            {t("qrScanner.scanCamera")}
           </>
         )}
       </Button>

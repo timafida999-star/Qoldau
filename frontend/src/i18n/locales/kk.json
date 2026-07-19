@@ -1,0 +1,230 @@
+{
+  "language": {
+    "label": "Тіл",
+    "en": "English",
+    "ru": "Русский",
+    "kk": "Қазақша"
+  },
+  "nav": {
+    "giveItem": "Зат тарату",
+    "reservations": "Брондар",
+    "admin": "Әкімші",
+    "logout": "Шығу",
+    "login": "Кіру",
+    "signup": "Тіркелу"
+  },
+  "common": {
+    "loading": "Жүктелуде...",
+    "saving": "Сақталуда...",
+    "saveChanges": "Өзгерістерді сақтау",
+    "cancel": "Болдырмау",
+    "edit": "Өңдеу",
+    "delete": "Жою",
+    "somethingWrong": "Бірдеңе қате кетті. Қайталап көріңіз."
+  },
+  "auth": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Құпия сөз",
+    "fullNameLabel": "Аты-жөні",
+    "namePlaceholder": "Айгерім Бекова",
+    "loginTitle": "Қайта келуіңізбен",
+    "loginSubtitle": "Заттарды брондау және тарату үшін кіріңіз.",
+    "loginSubmit": "Кіру",
+    "loggingIn": "Кіру...",
+    "loginFailed": "Кіру сәтсіз болды. Қайталап көріңіз.",
+    "noAccount": "Аккаунтыңыз жоқ па?",
+    "registerTitle": "Аккаунт жасаңыз",
+    "registerSubtitle": "Qoldau-ға қосылып, заттарға екінші өмір сыйлаңыз.",
+    "registerSubmit": "Тіркелу",
+    "creatingAccount": "Аккаунт жасалуда...",
+    "registerFailed": "Тіркелу сәтсіз болды. Қайталап көріңіз.",
+    "haveAccount": "Аккаунтыңыз бар ма?",
+    "invalidEmail": "Жарамды email енгізіңіз",
+    "shortPassword": "Құпия сөз кемінде 6 таңбадан тұруы керек",
+    "enterFullName": "Аты-жөніңізді енгізіңіз"
+  },
+  "home": {
+    "title": "Маңайдан пайдалы зат табыңыз",
+    "subtitle": "Мұнда бәрі тегін. Броньдаңыз, кездесіңіз, дайын.",
+    "getStarted": "Бастау",
+    "allCategories": "Барлық санаттар",
+    "allStatuses": "Барлық күйлер",
+    "grid": "Тор",
+    "map": "Карта",
+    "loading": "Хабарландырулар жүктелуде...",
+    "empty": "Бұл сүзгілерге сәйкес хабарландыру әзірге жоқ."
+  },
+  "createListing": {
+    "title": "Затты тегін беру"
+  },
+  "editListing": {
+    "title": "Хабарландыруды өңдеу"
+  },
+  "listing": {
+    "notFound": "Хабарландыру табылмады.",
+    "confirmDelete": "Осы хабарландыруды жоясыз ба? Мұны қайтару мүмкін емес.",
+    "reserveError": "Сұрауды жіберу мүмкін болмады. Қайталап көріңіз.",
+    "requestSent": "Сұрау жіберілді",
+    "sending": "Жіберілуде...",
+    "reserve": "Бұл затты брондау",
+    "loginToReserve": "Брондау үшін кіріңіз",
+    "noLongerAvailable": "Енді қолжетімді емес",
+    "trackPrefix": "Қадағалаңыз:",
+    "reservationsPage": "брондар бетінде",
+    "reportListing": "Хабарландыруға шағымдану",
+    "meetingLocation": "Кездесу орны"
+  },
+  "form": {
+    "title": "Атауы",
+    "titlePlaceholder": "Ағаш кітап сөресі, жаңадай",
+    "description": "Сипаттама",
+    "descriptionPlaceholder": "Заттың күйін, өлшемін және беру шарттарын сипаттаңыз",
+    "category": "Санаты",
+    "condition": "Күйі",
+    "addressLabel": "Мекенжай (қосымша ескертпе)",
+    "addressPlaceholder": "мысалы, Mega Silk Way маңында",
+    "location": "Орналасқан жері",
+    "photos": "Фотосуреттер",
+    "publish": "Хабарландыруды жариялау",
+    "clickMap": "Кездесу орнын белгілеу үшін картаны басыңыз.",
+    "shortTitle": "Атауы кемінде 3 таңбадан тұруы керек",
+    "shortDescription": "Сипаттама кемінде 10 таңбадан тұруы керек"
+  },
+  "reservations": {
+    "title": "Менің брондарым",
+    "received": "Келген сұраулар",
+    "sent": "Жіберілген сұраулар",
+    "empty": "Мұнда әзірге ештеңе жоқ.",
+    "from": "{{name}}-тен",
+    "requestedByYou": "сіз сұрадыңыз",
+    "accept": "Қабылдау",
+    "decline": "Қабылдамау",
+    "cancel": "Бас тарту",
+    "openChat": "Чатты ашу",
+    "showQr": "QR көрсету",
+    "confirmExchange": "Беруді растау"
+  },
+  "chat": {
+    "loading": "Чат жүктелуде...",
+    "notFound": "Чат табылмады.",
+    "about": "Зат туралы: {{title}}",
+    "connected": "Қосылған",
+    "connecting": "Қосылуда...",
+    "placeholder": "Хабарлама жазыңыз..."
+  },
+  "exchange": {
+    "notFound": "Беру табылмады.",
+    "completedTitle": "Беру аяқталды",
+    "completedBody": "«{{title}}» берілді. Qoldau-ды пайдаланғаныңызға рахмет!",
+    "leaveReview": "Пікір қалдыру",
+    "ownerInstruction": "Осы QR-кодты затты алушыға көрсетіңіз. Ол беруді растау үшін оны сканерлейді.",
+    "loadingQr": "QR жүктелуде...",
+    "recipientInstruction": "Затты алғаныңызды растау үшін иесі көрсеткен QR-кодты сканерлеңіз.",
+    "orManual": "НЕМЕСЕ КОДТЫ ҚОЛМЕН ЕНГІЗІҢІЗ",
+    "confirmationCode": "Растау коды",
+    "codePlaceholder": "Кодты қойыңыз немесе теріңіз",
+    "confirming": "Расталуда...",
+    "confirmExchange": "Беруді растау",
+    "codeMismatch": "Код сәйкес келмейді. Қайталап көріңіз.",
+    "qrAlt": "Беру QR-коды"
+  },
+  "qrScanner": {
+    "cameraError": "Камераға қол жеткізу мүмкін болмады. Кодты қолмен енгізуге болады.",
+    "stopCamera": "Камераны тоқтату",
+    "scanCamera": "Камерамен сканерлеу"
+  },
+  "review": {
+    "thanksTitle": "Пікіріңізге рахмет!",
+    "viewProfile": "{{name}} профилін ашу",
+    "title": "Тәжірибеңізді бағалаңыз",
+    "subtitle": "«{{listing}}» затын {{name}} арқылы беру қалай өтті?",
+    "rating": "Бағалау",
+    "commentLabel": "Пікір (міндетті емес)",
+    "commentPlaceholder": "Беру қалай өткенін бөлісіңіз",
+    "submitting": "Жіберілуде...",
+    "submit": "Пікір жіберу",
+    "error": "Пікіріңізді жіберу мүмкін болмады. Қайталап көріңіз."
+  },
+  "report": {
+    "trigger": "Шағымдану",
+    "reportListing": "Хабарландыруға шағымдану",
+    "reportUser": "Қолданушыға шағымдану",
+    "titleListing": "Хабарландыруға шағым",
+    "titleUser": "Қолданушыға шағым",
+    "reason": "Себебі",
+    "details": "Мәліметтер (міндетті емес)",
+    "detailsPlaceholder": "Не болды?",
+    "submit": "Шағым жіберу",
+    "submitting": "Жіберілуде...",
+    "thanks": "Хабарлағаныңызға рахмет. Біздің команда тексереді.",
+    "error": "Шағымды жіберу мүмкін болмады. Қайталап көріңіз."
+  },
+  "profile": {
+    "notFound": "Қолданушы табылмады.",
+    "reviewsSuffix": "пікір",
+    "changePhoto": "Фотоны өзгерту",
+    "uploading": "Жүктелуде...",
+    "reportUser": "Қолданушыға шағымдану",
+    "editProfile": "Профильді өңдеу",
+    "fullName": "Аты-жөні",
+    "phone": "Телефон",
+    "phonePlaceholder": "+7 700 000 0000",
+    "bio": "Өзім туралы",
+    "bioPlaceholder": "Өзіңіз туралы аздап айтып беріңіз",
+    "updated": "Профиль жаңартылды.",
+    "reviewsTitle": "Пікірлер ({{count}})",
+    "noReviews": "Әзірге пікір жоқ.",
+    "enterFullName": "Аты-жөніңізді енгізіңіз"
+  },
+  "admin": {
+    "title": "Әкімші — Шағымдар",
+    "open": "Ашық",
+    "resolved": "Шешілген",
+    "emptyOpen": "Ашық шағымдар жоқ.",
+    "emptyResolved": "Шешілген шағымдар жоқ.",
+    "reportedBy": "Жіберген: {{name}}",
+    "viewListing": "Хабарландыруды ашу",
+    "viewUser": "Қолданушыны ашу",
+    "resolve": "Шешу",
+    "deleteListing": "Хабарландыруды жою",
+    "confirmDelete": "Осы хабарландыруды жоясыз ба? Мұны қайтару мүмкін емес."
+  },
+  "category": {
+    "electronics": "Электроника",
+    "furniture": "Жиһаз",
+    "clothes": "Киім",
+    "books": "Кітаптар",
+    "kitchen": "Ас үй",
+    "kids": "Балаларға",
+    "other": "Басқа"
+  },
+  "condition": {
+    "new": "Жаңа",
+    "like_new": "Жаңадай",
+    "good": "Жақсы",
+    "fair": "Орташа",
+    "worn": "Тозған"
+  },
+  "status": {
+    "available": "Қолжетімді",
+    "reserved": "Броньдалған",
+    "completed": "Аяқталған"
+  },
+  "reservationStatus": {
+    "pending": "Күтуде",
+    "accepted": "Қабылданды",
+    "declined": "Қабылданбады",
+    "cancelled": "Бас тартылды"
+  },
+  "reportReason": {
+    "spam": "Спам",
+    "inappropriate": "Орынсыз мазмұн",
+    "fraud": "Алаяқтық",
+    "other": "Басқа"
+  },
+  "targetType": {
+    "listing": "хабарландыру",
+    "user": "қолданушы"
+  }
+}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Gift, LayoutGrid, Map as MapIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { fetchListings } from "@/api/listings";
 import { ListingCard } from "@/components/ListingCard";
@@ -10,12 +11,13 @@ import { Select } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import type { Category, ListingStatus, ListingSummary } from "@/types";
-import { CATEGORY_OPTIONS, STATUS_OPTIONS } from "@/utils/listingOptions";
+import { CATEGORY_VALUES, STATUS_VALUES } from "@/utils/listingOptions";
 
 type ViewMode = "grid" | "map";
 
 export default function HomePage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const [listings, setListings] = useState<ListingSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,13 +45,13 @@ export default function HomePage() {
             <Gift className="h-6 w-6" />
             <span className="text-sm font-medium uppercase tracking-wide">Qoldau</span>
           </div>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight">Find something useful nearby</h1>
-          <p className="mt-1 text-muted-foreground">Everything here is free. Reserve it, meet up, done.</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight">{t("home.title")}</h1>
+          <p className="mt-1 text-muted-foreground">{t("home.subtitle")}</p>
         </div>
 
         {!user && (
           <Link to="/register" className={cn(buttonVariants({ size: "lg" }))}>
-            Get started
+            {t("home.getStarted")}
           </Link>
         )}
       </div>
@@ -57,17 +59,18 @@ export default function HomePage() {
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-3">
           <Select value={category} onChange={(e) => setCategory(e.target.value as Category | "all")} className="w-44">
-            <option value="all">All categories</option>
-            {CATEGORY_OPTIONS.map(([value, label]) => (
+            <option value="all">{t("home.allCategories")}</option>
+            {CATEGORY_VALUES.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {t(`category.${value}`)}
               </option>
             ))}
           </Select>
           <Select value={status} onChange={(e) => setStatus(e.target.value as ListingStatus | "all")} className="w-40">
-            {STATUS_OPTIONS.map(([value, label]) => (
+            <option value="all">{t("home.allStatuses")}</option>
+            {STATUS_VALUES.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {t(`status.${value}`)}
               </option>
             ))}
           </Select>
@@ -82,7 +85,7 @@ export default function HomePage() {
             )}
           >
             <LayoutGrid className="h-4 w-4" />
-            Grid
+            {t("home.grid")}
           </button>
           <button
             onClick={() => setView("map")}
@@ -92,16 +95,16 @@ export default function HomePage() {
             )}
           >
             <MapIcon className="h-4 w-4" />
-            Map
+            {t("home.map")}
           </button>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="py-24 text-center text-muted-foreground">Loading listings...</div>
+        <div className="py-24 text-center text-muted-foreground">{t("home.loading")}</div>
       ) : !hasListings ? (
         <div className="rounded-xl border border-dashed border-border p-16 text-center text-muted-foreground">
-          No listings match these filters yet.
+          {t("home.empty")}
         </div>
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

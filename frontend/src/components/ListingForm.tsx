@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { createListing, deleteListingImage, updateListing, uploadListingImages } from "@/api/listings";
@@ -13,18 +14,16 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPicker } from "@/components/MapPicker";
-import type { Listing } from "@/types";
-import { CATEGORY_OPTIONS, CONDITION_OPTIONS } from "@/utils/listingOptions";
+import type { Category, Condition, Listing } from "@/types";
+import { CATEGORY_VALUES, CONDITION_VALUES } from "@/utils/listingOptions";
 
-const listingSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters").max(120),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  category: z.enum(["electronics", "furniture", "clothes", "books", "kitchen", "kids", "other"]),
-  condition: z.enum(["new", "like_new", "good", "fair", "worn"]),
-  address_text: z.string().optional(),
-});
-
-type ListingFormValues = z.infer<typeof listingSchema>;
+type ListingFormValues = {
+  title: string;
+  description: string;
+  category: Category;
+  condition: Condition;
+  address_text?: string;
+};
 
 const DEFAULT_CENTER: [number, number] = [51.169392, 71.449074]; // Astana
 
@@ -34,7 +33,16 @@ interface ListingFormProps {
 
 export function ListingForm({ initialListing }: ListingFormProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const isEdit = Boolean(initialListing);
+
+  const listingSchema = z.object({
+    title: z.string().min(3, t("form.shortTitle")).max(120),
+    description: z.string().min(10, t("form.shortDescription")),
+    category: z.enum(["electronics", "furniture", "clothes", "books", "kitchen", "kids", "other"]),
+    condition: z.enum(["new", "like_new", "good", "fair", "worn"]),
+    address_text: z.string().optional(),
+  });
 
   const [position, setPosition] = useState<[number, number]>(
     initialListing ? [initialListing.latitude, initialListing.longitude] : DEFAULT_CENTER
@@ -97,23 +105,23 @@ export function ListingForm({ initialListing }: ListingFormProps) {
 
       navigate(`/listings/${listing.id}`);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || "Something went wrong. Please try again.");
+      setError(err?.response?.data?.detail || t("common.somethingWrong"));
     }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
-        <Input id="title" placeholder="Wooden bookshelf, barely used" {...register("title")} />
+        <Label htmlFor="title">{t("form.title")}</Label>
+        <Input id="title" placeholder={t("form.titlePlaceholder")} {...register("title")} />
         {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t("form.description")}</Label>
         <Textarea
           id="description"
-          placeholder="Describe the item's condition, size, and pickup details"
+          placeholder={t("form.descriptionPlaceholder")}
           {...register("description")}
         />
         {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
@@ -121,21 +129,21 @@ export function ListingForm({ initialListing }: ListingFormProps) {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category">{t("form.category")}</Label>
           <Select id="category" {...register("category")}>
-            {CATEGORY_OPTIONS.map(([value, label]) => (
+            {CATEGORY_VALUES.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {t(`category.${value}`)}
               </option>
             ))}
           </Select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="condition">Condition</Label>
+          <Label htmlFor="condition">{t("form.condition")}</Label>
           <Select id="condition" {...register("condition")}>
-            {CONDITION_OPTIONS.map(([value, label]) => (
+            {CONDITION_VALUES.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {t(`condition.${value}`)}
               </option>
             ))}
           </Select>
@@ -143,12 +151,12 @@ export function ListingForm({ initialListing }: ListingFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="address_text">Address (optional note)</Label>
-        <Input id="address_text" placeholder="e.g. near Mega Silk Way" {...register("address_text")} />
+        <Label htmlFor="address_text">{t("form.addressLabel")}</Label>
+        <Input id="address_text" placeholder={t("form.addressPlaceholder")} {...register("address_text")} />
       </div>
 
       <div className="space-y-2">
-        <Label>Location</Label>
+        <Label>{t("form.location")}</Label>
         <MapPicker
           latitude={position[0]}
           longitude={position[1]}
@@ -157,7 +165,7 @@ export function ListingForm({ initialListing }: ListingFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="images">Photos</Label>
+        <Label htmlFor="images">{t("form.photos")}</Label>
         <Input id="images" type="file" accept="image/*" multiple onChange={handleFileChange} />
 
         {existingImages.length > 0 && (
@@ -198,7 +206,7 @@ export function ListingForm({ initialListing }: ListingFormProps) {
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <Button type="submit" size="lg" disabled={isSubmitting}>
-        {isSubmitting ? "Saving..." : isEdit ? "Save changes" : "Publish listing"}
+        {isSubmitting ? t("common.saving") : isEdit ? t("common.saveChanges") : t("form.publish")}
       </Button>
     </form>
   );
