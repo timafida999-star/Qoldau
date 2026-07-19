@@ -87,6 +87,7 @@ export interface ListingSummary {
   status: ListingStatus;
   latitude: number;
   longitude: number;
+  address_text?: string | null;
   images: ListingImage[];
   created_at: string;
 }

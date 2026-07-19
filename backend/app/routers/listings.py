@@ -32,6 +32,7 @@ def ensure_owner(listing: Listing, user: User) -> None:
 def list_listings(
     category: Optional[Category] = None,
     status_filter: Optional[ListingStatus] = Query(default=None, alias="status"),
+    search: Optional[str] = None,
     min_lat: Optional[float] = None,
     max_lat: Optional[float] = None,
     min_lng: Optional[float] = None,
@@ -44,6 +45,9 @@ def list_listings(
         query = query.filter(Listing.category == category)
     if status_filter:
         query = query.filter(Listing.status == status_filter)
+    if search:
+        term = f"%{search.strip()}%"
+        query = query.filter(Listing.title.ilike(term) | Listing.description.ilike(term))
     if min_lat is not None:
         query = query.filter(Listing.latitude >= min_lat)
     if max_lat is not None:

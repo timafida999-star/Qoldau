@@ -65,5 +65,6 @@ class ListingSummary(BaseModel):
     status: ListingStatus
     latitude: float
     longitude: float
+    address_text: Optional[str] = None
     images: List[ListingImageOut] = []
     created_at: datetime

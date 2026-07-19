@@ -4,6 +4,7 @@ import type { Category, Condition, Listing, ListingStatus, ListingSummary } from
 export interface ListingFilters {
   category?: Category;
   status?: ListingStatus;
+  search?: string;
 }
 
 export interface ListingInput {

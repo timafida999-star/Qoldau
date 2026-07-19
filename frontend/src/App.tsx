@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
 import { AdminRoute } from "@/components/AdminRoute";
+import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import AdminPage from "@/pages/Admin";
@@ -18,9 +19,9 @@ import ReservationsPage from "@/pages/Reservations";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -85,6 +86,7 @@ export default function App() {
           />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 }

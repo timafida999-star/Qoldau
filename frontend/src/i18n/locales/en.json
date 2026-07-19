@@ -53,7 +53,15 @@
     "grid": "Grid",
     "map": "Map",
     "loading": "Loading listings...",
-    "empty": "No listings match these filters yet."
+    "empty": "No listings match these filters yet.",
+    "searchPlaceholder": "Search for items..."
+  },
+  "footer": {
+    "tagline": "A community for giving useful items a second life — free to give, free to take.",
+    "explore": "Explore",
+    "browse": "Browse items",
+    "rights": "© {{year}} Qoldau",
+    "builtWith": "Built with care for the community"
   },
   "createListing": {
     "title": "Give an item away"
