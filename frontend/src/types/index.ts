@@ -153,6 +153,25 @@ export interface Review {
   created_at: string;
 }
 
+export type NotificationType =
+  | "reservation_requested"
+  | "reservation_accepted"
+  | "reservation_declined"
+  | "reservation_cancelled"
+  | "message_received"
+  | "exchange_completed"
+  | "review_received";
+
+export interface AppNotification {
+  id: string;
+  type: NotificationType;
+  actor_name?: string | null;
+  entity_title?: string | null;
+  link?: string | null;
+  is_read: boolean;
+  created_at: string;
+}
+
 export type ReportTargetType = "listing" | "user";
 export type ReportReason = "spam" | "inappropriate" | "fraud" | "other";
 export type ReportStatus = "open" | "resolved";

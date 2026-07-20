@@ -56,6 +56,20 @@
     "empty": "Бұл сүзгілерге сәйкес хабарландыру әзірге жоқ.",
     "searchPlaceholder": "Заттарды іздеу..."
   },
+  "notifications": {
+    "title": "Хабарламалар",
+    "markAllRead": "Барлығын оқылды деп белгілеу",
+    "empty": "Әзірге хабарлама жоқ.",
+    "types": {
+      "reservation_requested": "{{actor}} «{{title}}» затын алғысы келеді",
+      "reservation_accepted": "{{actor}} «{{title}}» бойынша сұрауыңызды қабылдады",
+      "reservation_declined": "{{actor}} «{{title}}» бойынша сұрауыңызды қабылдамады",
+      "reservation_cancelled": "{{actor}} «{{title}}» бойынша сұрауынан бас тартты",
+      "message_received": "{{actor}} жаңа хабарлама жіберді",
+      "exchange_completed": "{{actor}} «{{title}}» затын алғанын растады — пікір қалдырыңыз",
+      "review_received": "{{actor}} сізге пікір қалдырды"
+    }
+  },
   "footer": {
     "tagline": "Пайдалы заттарға екінші өмір сыйлайтын қауымдастық — тегін беріңіз, тегін алыңыз.",
     "explore": "Шолу",

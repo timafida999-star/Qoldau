@@ -11,6 +11,7 @@ from app.models.chat import Chat, ChatMessage
 from app.models.user import User
 from app.schemas.chat import ChatMessageOut, ChatOut
 from app.schemas.user import UserPublic
+from app.utils.notifications import notify_new_message
 from app.websocket.manager import manager
 
 router = APIRouter(prefix="/chats", tags=["chat"])
@@ -95,6 +96,16 @@ async def chat_websocket(websocket: WebSocket, chat_id: uuid.UUID, token: str = 
 
                 message = ChatMessage(chat_id=chat_id, sender_id=user.id, content=content)
                 db.add(message)
+
+                recipient_id = requester_id if user.id == owner_id else owner_id
+                notify_new_message(
+                    db,
+                    user_id=recipient_id,
+                    actor_name=user.full_name,
+                    entity_title=chat.reservation.listing.title,
+                    link=f"/chats/{chat_id}",
+                )
+
                 db.commit()
                 db.refresh(message)
 

@@ -9,10 +9,12 @@ from app.database.session import get_db
 from app.models.chat import Chat
 from app.models.exchange import Exchange
 from app.models.listing import Listing, ListingStatus
+from app.models.notification import NotificationType
 from app.models.reservation import Reservation, ReservationStatus
 from app.models.user import User
 from app.schemas.reservation import ListingBrief, ReservationAction, ReservationOut
 from app.schemas.user import UserPublic
+from app.utils.notifications import notify
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
 listing_reservations_router = APIRouter(prefix="/listings", tags=["reservations"])
@@ -65,6 +67,16 @@ def create_reservation(
 
     reservation = Reservation(listing_id=listing.id, requester_id=current_user.id)
     db.add(reservation)
+
+    notify(
+        db,
+        user_id=listing.owner_id,
+        type=NotificationType.RESERVATION_REQUESTED,
+        actor_name=current_user.full_name,
+        entity_title=listing.title,
+        link="/reservations",
+    )
+
     db.commit()
     db.refresh(reservation)
     return to_reservation_out(reservation, current_user)
@@ -127,8 +139,33 @@ def update_reservation(
             )
             for other in other_pending:
                 other.status = ReservationStatus.DECLINED
+                notify(
+                    db,
+                    user_id=other.requester_id,
+                    type=NotificationType.RESERVATION_DECLINED,
+                    actor_name=current_user.full_name,
+                    entity_title=listing.title,
+                    link="/reservations",
+                )
+
+            notify(
+                db,
+                user_id=reservation.requester_id,
+                type=NotificationType.RESERVATION_ACCEPTED,
+                actor_name=current_user.full_name,
+                entity_title=listing.title,
+                link="/reservations",
+            )
         else:
             reservation.status = ReservationStatus.DECLINED
+            notify(
+                db,
+                user_id=reservation.requester_id,
+                type=NotificationType.RESERVATION_DECLINED,
+                actor_name=current_user.full_name,
+                entity_title=listing.title,
+                link="/reservations",
+            )
 
     elif payload.action == "cancel":
         if not is_requester:
@@ -136,6 +173,14 @@ def update_reservation(
         if reservation.status != ReservationStatus.PENDING:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only pending requests can be cancelled")
         reservation.status = ReservationStatus.CANCELLED
+        notify(
+            db,
+            user_id=listing.owner_id,
+            type=NotificationType.RESERVATION_CANCELLED,
+            actor_name=current_user.full_name,
+            entity_title=listing.title,
+            link="/reservations",
+        )
 
     db.commit()
     db.refresh(reservation)

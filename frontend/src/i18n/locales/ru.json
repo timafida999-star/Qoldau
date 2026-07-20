@@ -56,6 +56,20 @@
     "empty": "Пока нет объявлений по этим фильтрам.",
     "searchPlaceholder": "Поиск вещей..."
   },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllRead": "Отметить все как прочитанные",
+    "empty": "Уведомлений пока нет.",
+    "types": {
+      "reservation_requested": "{{actor}} хочет забрать «{{title}}»",
+      "reservation_accepted": "{{actor}} принял ваш запрос на «{{title}}»",
+      "reservation_declined": "{{actor}} отклонил ваш запрос на «{{title}}»",
+      "reservation_cancelled": "{{actor}} отменил свой запрос на «{{title}}»",
+      "message_received": "Новое сообщение от {{actor}}",
+      "exchange_completed": "{{actor}} подтвердил передачу «{{title}}» — оставьте отзыв",
+      "review_received": "{{actor}} оставил вам отзыв"
+    }
+  },
   "footer": {
     "tagline": "Сообщество, которое даёт полезным вещам вторую жизнь — отдавайте и берите бесплатно.",
     "explore": "Обзор",

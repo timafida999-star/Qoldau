@@ -8,8 +8,10 @@ from app.auth.dependencies import get_current_user
 from app.database.session import get_db
 from app.models.exchange import Exchange, ExchangeStatus
 from app.models.listing import ListingStatus
+from app.models.notification import NotificationType
 from app.models.user import User
 from app.schemas.exchange import ExchangeOut, ExchangeVerifyRequest
+from app.utils.notifications import notify
 from app.utils.qr import generate_qr_png
 
 router = APIRouter(prefix="/exchanges", tags=["exchanges"])
@@ -85,7 +87,17 @@ def verify_exchange(
 
     exchange.status = ExchangeStatus.COMPLETED
     exchange.completed_at = datetime.now(timezone.utc)
-    exchange.reservation.listing.status = ListingStatus.COMPLETED
+    listing = exchange.reservation.listing
+    listing.status = ListingStatus.COMPLETED
+
+    notify(
+        db,
+        user_id=listing.owner_id,
+        type=NotificationType.EXCHANGE_COMPLETED,
+        actor_name=current_user.full_name,
+        entity_title=listing.title,
+        link=f"/reviews/new/{exchange.id}",
+    )
 
     db.commit()
     db.refresh(exchange)

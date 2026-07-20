@@ -56,6 +56,20 @@
     "empty": "No listings match these filters yet.",
     "searchPlaceholder": "Search for items..."
   },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet.",
+    "types": {
+      "reservation_requested": "{{actor}} wants to take \"{{title}}\"",
+      "reservation_accepted": "{{actor}} accepted your request for \"{{title}}\"",
+      "reservation_declined": "{{actor}} declined your request for \"{{title}}\"",
+      "reservation_cancelled": "{{actor}} cancelled their request for \"{{title}}\"",
+      "message_received": "New message from {{actor}}",
+      "exchange_completed": "{{actor}} confirmed the handoff of \"{{title}}\" — leave a review",
+      "review_received": "{{actor}} left you a review"
+    }
+  },
   "footer": {
     "tagline": "A community for giving useful items a second life — free to give, free to take.",
     "explore": "Explore",

@@ -33,3 +33,17 @@
     font-family: "Inter", system-ui, -apple-system, sans-serif;
   }
 }
+
+/* Leaflet gives its panes and controls z-index values up to 1000, which would
+   otherwise cover the navbar, dialogs and dropdowns. Isolating the map into its
+   own stacking context keeps those values internal, so the map still layers
+   correctly among itself but never escapes above the app chrome.
+
+   This lives outside @layer base on purpose: Tailwind purges class selectors in
+   its layers when the class never appears in the scanned source, and Leaflet
+   only adds this class at runtime. */
+.leaflet-container {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}

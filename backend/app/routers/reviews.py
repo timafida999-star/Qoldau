@@ -7,10 +7,12 @@ from sqlalchemy.orm import Session
 from app.auth.dependencies import get_current_user
 from app.database.session import get_db
 from app.models.exchange import Exchange, ExchangeStatus
+from app.models.notification import NotificationType
 from app.models.review import Review
 from app.models.user import User
 from app.schemas.review import ReviewCreate, ReviewOut
 from app.schemas.user import UserPublic
+from app.utils.notifications import notify
 
 router = APIRouter(tags=["reviews"])
 
@@ -59,6 +61,15 @@ def create_review(
     new_count = reviewee.rating_count + 1
     reviewee.rating_avg = round((reviewee.rating_avg * reviewee.rating_count + payload.rating) / new_count, 2)
     reviewee.rating_count = new_count
+
+    notify(
+        db,
+        user_id=reviewee_id,
+        type=NotificationType.REVIEW_RECEIVED,
+        actor_name=current_user.full_name,
+        entity_title=exchange.reservation.listing.title,
+        link=f"/profile/{reviewee_id}",
+    )
 
     db.commit()
     db.refresh(review)

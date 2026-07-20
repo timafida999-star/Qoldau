@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useAuth } from "@/hooks/useAuth";
 
 export function Navbar() {
@@ -45,6 +46,7 @@ export function Navbar() {
                   {t("nav.admin")}
                 </Button>
               )}
+              <NotificationBell />
               <LanguageSwitcher />
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
