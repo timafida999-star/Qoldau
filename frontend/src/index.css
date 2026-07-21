@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 152 55% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 152 45% 94%;
+    --accent-foreground: 152 55% 25%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 152 55% 40%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 45% 8%;
+    --foreground: 210 20% 96%;
+    --card: 222 40% 11%;
+    --card-foreground: 210 20% 96%;
+    --primary: 152 50% 48%;
+    --primary-foreground: 222 47% 8%;
+    --secondary: 222 30% 16%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 222 30% 16%;
+    --muted-foreground: 215 16% 65%;
+    --accent: 152 40% 18%;
+    --accent-foreground: 152 55% 72%;
+    --destructive: 0 63% 48%;
+    --destructive-foreground: 210 20% 96%;
+    --border: 222 25% 20%;
+    --input: 222 25% 20%;
+    --ring: 152 50% 48%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased transition-colors duration-300;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Leaflet gives its panes and controls z-index values up to 1000, which would
+   otherwise cover the navbar, dialogs and dropdowns. Isolating the map into its
+   own stacking context keeps those values internal, so the map still layers
+   correctly among itself but never escapes above the app chrome.
+
+   This lives outside @layer base on purpose: Tailwind purges class selectors in
+   its layers when the class never appears in the scanned source, and Leaflet
+   only adds this class at runtime. */
+.leaflet-container {
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
+}
