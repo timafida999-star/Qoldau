@@ -37,7 +37,11 @@ export default function RegisterPage() {
       await registerUser(values);
       navigate("/");
     } catch (err: any) {
-      setServerError(err?.response?.data?.detail || t("auth.registerFailed"));
+      if (err?.response?.status === 429) {
+        setServerError(t("errors.tooManyRequests"));
+      } else {
+        setServerError(err?.response?.data?.detail || t("auth.registerFailed"));
+      }
     }
   }
 

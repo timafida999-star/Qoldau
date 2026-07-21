@@ -36,7 +36,11 @@ export default function LoginPage() {
       await login(values);
       navigate("/");
     } catch (err: any) {
-      setServerError(err?.response?.data?.detail || t("auth.loginFailed"));
+      if (err?.response?.status === 429) {
+        setServerError(t("errors.tooManyRequests"));
+      } else {
+        setServerError(err?.response?.data?.detail || t("auth.loginFailed"));
+      }
     }
   }
 

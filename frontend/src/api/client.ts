@@ -14,6 +14,22 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Log rate-limit responses so throttling is visible in the console during
+// development, then let the calling component handle the error as usual.
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 429) {
+      const retryAfter = error.response.headers?.["retry-after"];
+      const url = error.config?.url ?? "unknown endpoint";
+      console.warn(
+        `[rate-limit] 429 from ${url}${retryAfter ? ` — retry after ${retryAfter}s` : ""}`
+      );
+    }
+    return Promise.reject(error);
+  }
+);
+
 export function getAuthToken(): string | null {
   return localStorage.getItem("qoldau_token");
 }

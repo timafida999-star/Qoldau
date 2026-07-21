@@ -19,6 +19,9 @@ ADMIN_DB_URL = f"{_prefix}/{_base_name}"  # an existing DB we can connect to, to
 os.environ["DATABASE_URL"] = TEST_DB_URL
 os.environ["JWT_SECRET_KEY"] = "test-secret-key-that-is-definitely-long-enough-1234567890"
 os.environ["UPLOAD_DIR"] = tempfile.mkdtemp(prefix="qoldau_test_uploads_")
+# Disable rate limiting by default so the suite's rapid requests aren't throttled;
+# the dedicated rate-limit test re-enables it explicitly.
+os.environ["RATE_LIMIT_ENABLED"] = "false"
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
+from app.rate_limit import limiter, rate_limit_handler
 from app.routers import (
     admin,
     auth,
@@ -17,6 +19,12 @@ from app.routers import (
 )
 
 app = FastAPI(title="Qoldau API", version="0.1.0")
+
+# Rate limiting: register the limiter on app.state and a 429 handler that keeps
+# CORS headers. Limits are applied per-endpoint via @limiter.limit decorators
+# (see routers/auth.py), which raise inside FastAPI's handled layer.
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 app.add_middleware(
     CORSMiddleware,

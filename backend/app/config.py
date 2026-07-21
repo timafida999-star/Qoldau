@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 10080
     upload_dir: str = "uploads"
     max_upload_bytes: int = 5 * 1024 * 1024  # 5 MB per image
+    rate_limit_enabled: bool = True
 
     class Config:
         env_file = ".env"
