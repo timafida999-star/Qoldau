@@ -1,11 +1,12 @@
 import uuid
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database.session import get_db
+from app.rate_limit import limiter
 from app.models.listing import Category, Condition, Listing, ListingImage, ListingStatus
 from app.models.user import User
 from app.schemas.listing import ListingCreate, ListingImageOut, ListingOut, ListingPage, ListingSummary, ListingUpdate
@@ -76,7 +77,9 @@ def list_listings(
 
 
 @router.post("", response_model=ListingOut, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute;40/hour")
 def create_listing(
+    request: Request,
     payload: ListingCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -124,7 +127,9 @@ def delete_listing(
 
 
 @router.post("/{listing_id}/images", response_model=List[ListingImageOut], status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/minute")
 def upload_listing_images(
+    request: Request,
     listing_id: uuid.UUID,
     files: List[UploadFile] = File(...),
     current_user: User = Depends(get_current_user),

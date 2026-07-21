@@ -1,11 +1,12 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database.session import get_db
+from app.rate_limit import limiter
 from app.models.chat import Chat
 from app.models.exchange import Exchange
 from app.models.listing import Listing, ListingStatus
@@ -38,7 +39,9 @@ def to_reservation_out(reservation: Reservation, viewer: User) -> ReservationOut
 @listing_reservations_router.post(
     "/{listing_id}/reservations", response_model=ReservationOut, status_code=status.HTTP_201_CREATED
 )
+@limiter.limit("20/minute;100/hour")
 def create_reservation(
+    request: Request,
     listing_id: uuid.UUID,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),

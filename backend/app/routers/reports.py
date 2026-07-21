@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database.session import get_db
 from app.models.report import Report
 from app.models.user import User
+from app.rate_limit import limiter
 from app.schemas.report import ReportCreate, ReportOut
 from app.schemas.user import UserPublic
 
@@ -12,7 +13,9 @@ router = APIRouter(prefix="/reports", tags=["reports"])
 
 
 @router.post("", response_model=ReportOut, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute;30/hour")
 def create_report(
+    request: Request,
     payload: ReportCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),

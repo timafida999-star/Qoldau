@@ -30,3 +30,23 @@ def test_login_is_rate_limited(client, make_user):
     finally:
         limiter.enabled = False
         limiter.reset()
+
+
+def test_create_listing_is_rate_limited(client, make_user):
+    owner = make_user()
+
+    limiter.enabled = True
+    try:
+        payload = {
+            "title": "Flood item", "description": "scripted flood attempt",
+            "category": "other", "condition": "good", "latitude": 43.0, "longitude": 76.0,
+        }
+        codes = [
+            client.post("/listings", headers=owner["headers"], json=payload).status_code
+            for _ in range(12)  # limit is 10/minute
+        ]
+        assert codes.count(201) == 10
+        assert 429 in codes
+    finally:
+        limiter.enabled = False
+        limiter.reset()

@@ -1,11 +1,12 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File, status
 from sqlalchemy.orm import Session
 
 from app.auth.dependencies import get_current_user
 from app.database.session import get_db
 from app.models.user import User
+from app.rate_limit import limiter
 from app.schemas.user import UserMe, UserPublic, UserUpdate
 from app.utils.files import save_upload
 
@@ -34,7 +35,9 @@ def update_me(
 
 
 @router.post("/me/avatar", response_model=UserMe)
+@limiter.limit("10/minute")
 def upload_avatar(
+    request: Request,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
