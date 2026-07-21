@@ -68,3 +68,11 @@ class ListingSummary(BaseModel):
     address_text: Optional[str] = None
     images: List[ListingImageOut] = []
     created_at: datetime
+
+
+class ListingPage(BaseModel):
+    items: List[ListingSummary]
+    total: int
+    page: int
+    page_size: int
+    has_more: bool

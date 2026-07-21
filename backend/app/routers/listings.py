@@ -8,7 +8,7 @@ from app.auth.dependencies import get_current_user
 from app.database.session import get_db
 from app.models.listing import Category, Condition, Listing, ListingImage, ListingStatus
 from app.models.user import User
-from app.schemas.listing import ListingCreate, ListingImageOut, ListingOut, ListingSummary, ListingUpdate
+from app.schemas.listing import ListingCreate, ListingImageOut, ListingOut, ListingPage, ListingSummary, ListingUpdate
 from app.utils.files import save_upload
 
 router = APIRouter(prefix="/listings", tags=["listings"])
@@ -28,11 +28,13 @@ def ensure_owner(listing: Listing, user: User) -> None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not the listing owner")
 
 
-@router.get("", response_model=List[ListingSummary])
+@router.get("", response_model=ListingPage)
 def list_listings(
     category: Optional[Category] = None,
     status_filter: Optional[ListingStatus] = Query(default=None, alias="status"),
     search: Optional[str] = None,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=12, ge=1, le=48),
     min_lat: Optional[float] = None,
     max_lat: Optional[float] = None,
     min_lng: Optional[float] = None,
@@ -57,7 +59,20 @@ def list_listings(
     if max_lng is not None:
         query = query.filter(Listing.longitude <= max_lng)
 
-    return query.order_by(Listing.created_at.desc()).all()
+    total = query.count()
+    items = (
+        query.order_by(Listing.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
+    return ListingPage(
+        items=items,
+        total=total,
+        page=page,
+        page_size=page_size,
+        has_more=page * page_size < total,
+    )
 
 
 @router.post("", response_model=ListingOut, status_code=status.HTTP_201_CREATED)

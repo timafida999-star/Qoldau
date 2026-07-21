@@ -1,10 +1,12 @@
 import { apiClient } from "./client";
-import type { Category, Condition, Listing, ListingStatus, ListingSummary } from "@/types";
+import type { Category, Condition, Listing, ListingStatus, ListingSummary, Paginated } from "@/types";
 
 export interface ListingFilters {
   category?: Category;
   status?: ListingStatus;
   search?: string;
+  page?: number;
+  page_size?: number;
 }
 
 export interface ListingInput {
@@ -17,8 +19,8 @@ export interface ListingInput {
   address_text?: string;
 }
 
-export async function fetchListings(filters: ListingFilters = {}): Promise<ListingSummary[]> {
-  const { data } = await apiClient.get<ListingSummary[]>("/listings", { params: filters });
+export async function fetchListings(filters: ListingFilters = {}): Promise<Paginated<ListingSummary>> {
+  const { data } = await apiClient.get<Paginated<ListingSummary>>("/listings", { params: filters });
   return data;
 }
 

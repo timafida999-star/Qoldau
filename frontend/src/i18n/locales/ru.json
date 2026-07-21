@@ -54,7 +54,9 @@
     "map": "Карта",
     "loading": "Загрузка объявлений...",
     "empty": "Пока нет объявлений по этим фильтрам.",
-    "searchPlaceholder": "Поиск вещей..."
+    "searchPlaceholder": "Поиск вещей...",
+    "loadMore": "Показать ещё",
+    "showingCount": "Показано {{shown}} из {{total}}"
   },
   "notifications": {
     "title": "Уведомления",

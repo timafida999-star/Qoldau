@@ -54,7 +54,9 @@
     "map": "Map",
     "loading": "Loading listings...",
     "empty": "No listings match these filters yet.",
-    "searchPlaceholder": "Search for items..."
+    "searchPlaceholder": "Search for items...",
+    "loadMore": "Load more",
+    "showingCount": "Showing {{shown}} of {{total}}"
   },
   "notifications": {
     "title": "Notifications",

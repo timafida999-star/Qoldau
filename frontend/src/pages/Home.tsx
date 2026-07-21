@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Gift, LayoutGrid, Map as MapIcon, Search } from "lucide-react";
+import { Gift, LayoutGrid, Loader2, Map as MapIcon, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -7,7 +7,7 @@ import { fetchListings } from "@/api/listings";
 import { ListingCard } from "@/components/ListingCard";
 import { ListingCardSkeleton } from "@/components/ListingCardSkeleton";
 import { MapView } from "@/components/MapView";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,12 +17,18 @@ import { CATEGORY_VALUES, STATUS_VALUES } from "@/utils/listingOptions";
 
 type ViewMode = "grid" | "map";
 
+const PAGE_SIZE = 12;
+
 export default function HomePage() {
   const { user } = useAuth();
   const { t } = useTranslation();
 
   const [listings, setListings] = useState<ListingSummary[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [view, setView] = useState<ViewMode>("grid");
   const [category, setCategory] = useState<Category | "all">("all");
   const [status, setStatus] = useState<ListingStatus | "all">("available");
@@ -34,16 +40,48 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  // Reset to the first page whenever a filter or the search term changes.
   useEffect(() => {
+    let active = true;
     setIsLoading(true);
     fetchListings({
       category: category === "all" ? undefined : category,
       status: status === "all" ? undefined : status,
       search: debouncedSearch || undefined,
+      page: 1,
+      page_size: PAGE_SIZE,
     })
-      .then(setListings)
-      .finally(() => setIsLoading(false));
+      .then((res) => {
+        if (!active) return;
+        setListings(res.items);
+        setTotal(res.total);
+        setHasMore(res.has_more);
+        setPage(1);
+      })
+      .finally(() => active && setIsLoading(false));
+    return () => {
+      active = false;
+    };
   }, [category, status, debouncedSearch]);
+
+  async function loadMore() {
+    const nextPage = page + 1;
+    setIsLoadingMore(true);
+    try {
+      const res = await fetchListings({
+        category: category === "all" ? undefined : category,
+        status: status === "all" ? undefined : status,
+        search: debouncedSearch || undefined,
+        page: nextPage,
+        page_size: PAGE_SIZE,
+      });
+      setListings((prev) => [...prev, ...res.items]);
+      setHasMore(res.has_more);
+      setPage(nextPage);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }
 
   const hasListings = useMemo(() => listings.length > 0, [listings]);
 
@@ -134,11 +172,25 @@ export default function HomePage() {
             {t("home.empty")}
           </div>
         ) : view === "grid" ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {listings.map((listing) => (
+                <ListingCard key={listing.id} listing={listing} />
+              ))}
+            </div>
+
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <p className="text-sm text-muted-foreground">
+                {t("home.showingCount", { shown: listings.length, total })}
+              </p>
+              {hasMore && (
+                <Button variant="outline" size="lg" onClick={loadMore} disabled={isLoadingMore}>
+                  {isLoadingMore && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {t("home.loadMore")}
+                </Button>
+              )}
+            </div>
+          </>
         ) : (
           <MapView listings={listings} />
         )}

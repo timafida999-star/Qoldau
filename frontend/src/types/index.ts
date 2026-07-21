@@ -92,6 +92,14 @@ export interface ListingSummary {
   created_at: string;
 }
 
+export interface Paginated<T> {
+  items: T[];
+  total: number;
+  page: number;
+  page_size: number;
+  has_more: boolean;
+}
+
 export type ReservationStatus = "pending" | "accepted" | "declined" | "cancelled";
 
 export interface ListingBrief {

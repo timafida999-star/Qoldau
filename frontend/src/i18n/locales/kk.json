@@ -54,7 +54,9 @@
     "map": "Карта",
     "loading": "Хабарландырулар жүктелуде...",
     "empty": "Бұл сүзгілерге сәйкес хабарландыру әзірге жоқ.",
-    "searchPlaceholder": "Заттарды іздеу..."
+    "searchPlaceholder": "Заттарды іздеу...",
+    "loadMore": "Тағы көрсету",
+    "showingCount": "{{total}} ішінен {{shown}} көрсетілді"
   },
   "notifications": {
     "title": "Хабарламалар",
