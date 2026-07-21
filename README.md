@@ -50,6 +50,20 @@ npm install
 npm run dev
 ```
 
+## Testing
+
+The backend has a pytest suite covering auth, listings, the full reservation →
+QR exchange → review lifecycle, notifications, admin/reports, and the security
+hardening (JWT secret validation and image-upload sanitising). Tests run against
+a dedicated `qoldau_test` database and roll back after each test.
+
+With the stack running (`docker compose up`):
+
+```bash
+docker compose exec backend pip install -r requirements-dev.txt
+docker compose exec backend pytest
+```
+
 ## Making a user an admin
 
 There's no signup flow for admins by design. Promote an existing user directly in the database:
