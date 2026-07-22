@@ -1,48 +1,59 @@
+# Production stack 
+#
+#   cp .env.example .env                 # compose vars (Postgres creds, base path)
+#   cp backend/.env.example backend/.env # backend app config + secrets
+name: qoldau
+
 services:
-  db:
+  qoldau-db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: qoldau
-      POSTGRES_PASSWORD: qoldau
-      POSTGRES_DB: qoldau
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - qoldau_db_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
+    networks:
+      - esg-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U qoldau"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  backend:
+  qoldau-backend:
     build: ./backend
     restart: unless-stopped
-    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips='*'"
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend:/app
       - qoldau_uploads:/app/uploads
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     depends_on:
-      db:
+      qoldau-db:
         condition: service_healthy
+    networks:
+      - esg-network
 
-  frontend:
-    build: ./frontend
+  qoldau-web:
+    build:
+      context: ./frontend
+      args:
+        VITE_BASE_PATH: ${VITE_BASE_PATH}
     restart: unless-stopped
-    env_file:
-      - ./frontend/.env
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    ports:
-      - "5173:5173"
+    expose:
+      - "80"
     depends_on:
-      - backend
+      - qoldau-backend
+    networks:
+      - esg-network
+
+networks:
+  esg-network:
+    external: true
 
 volumes:
   qoldau_db_data:

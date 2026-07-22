@@ -1,5 +1,5 @@
-FROM node:20-alpine
-
+# ---- Build stage ----
+FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package.json ./
@@ -7,6 +7,14 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 5173
+# The subpath the app is served under (e.g. "/qoldau/"). Drives Vite base,
+# the router basename, and the same-origin API URL. Defaults to root.
+ARG VITE_BASE_PATH=/
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
+RUN npm run build
 
-CMD ["npm", "run", "dev", "--", "--host"]
+# ---- Serve stage ----
+FROM nginx:1.27-alpine
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
