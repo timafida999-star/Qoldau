@@ -75,7 +75,7 @@ export default function ListingDetailPage() {
         <div>
           <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-border bg-secondary shadow-soft">
             {cover ? (
-              <img src={`${API_BASE_URL}${cover.image_url}`} alt={listing.title} className="h-full w-full object-cover" />
+              <img src={`${API_BASE_URL}${cover.image_url}`} alt={listing.title} className="h-full w-full object-contain" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-muted-foreground">
                 <ImageOff className="h-10 w-10" />
@@ -92,7 +92,7 @@ export default function ListingDetailPage() {
                     index === activeImage ? "border-primary" : "border-transparent"
                   }`}
                 >
-                  <img src={`${API_BASE_URL}${img.image_url}`} alt="" className="h-full w-full object-cover" />
+                  <img src={`${API_BASE_URL}${img.image_url}`} alt="" className="h-full w-full object-contain" />
                 </button>
               ))}
             </div>
@@ -120,7 +120,7 @@ export default function ListingDetailPage() {
                   <img
                     src={`${API_BASE_URL}${listing.owner.avatar_url}`}
                     alt={listing.owner.full_name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 ) : (
                   listing.owner.full_name.charAt(0).toUpperCase()

@@ -172,7 +172,7 @@ export function ListingForm({ initialListing }: ListingFormProps) {
           <div className="flex flex-wrap gap-3 pt-2">
             {existingImages.map((img) => (
               <div key={img.id} className="relative h-20 w-20 overflow-hidden rounded-lg border border-border">
-                <img src={`${API_BASE_URL}${img.image_url}`} alt="" className="h-full w-full object-cover" />
+                <img src={`${API_BASE_URL}${img.image_url}`} alt="" className="h-full w-full object-contain" />
                 <button
                   type="button"
                   onClick={() => removeExistingImage(img.id)}
@@ -189,7 +189,7 @@ export function ListingForm({ initialListing }: ListingFormProps) {
           <div className="flex flex-wrap gap-3 pt-2">
             {files.map((file, index) => (
               <div key={index} className="relative h-20 w-20 overflow-hidden rounded-lg border border-border">
-                <img src={URL.createObjectURL(file)} alt="" className="h-full w-full object-cover" />
+                <img src={URL.createObjectURL(file)} alt="" className="h-full w-full object-contain" />
                 <button
                   type="button"
                   onClick={() => removeSelectedFile(index)}

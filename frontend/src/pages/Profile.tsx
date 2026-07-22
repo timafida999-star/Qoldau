@@ -111,7 +111,7 @@ export default function ProfilePage() {
       <div className="mb-8 flex items-center gap-6">
         <div className="relative h-24 w-24 overflow-hidden rounded-full bg-secondary shadow-soft">
           {avatarSrc ? (
-            <img src={avatarSrc} alt={profile.full_name} className="h-full w-full object-cover" />
+            <img src={avatarSrc} alt={profile.full_name} className="h-full w-full object-contain" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-muted-foreground">
               {profile.full_name.charAt(0).toUpperCase()}
