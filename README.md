@@ -3,11 +3,6 @@
 A platform for giving away useful items for free. Users publish listings, others reserve them,
 arrange the handoff through in-app chat, confirm the exchange with a QR code, and leave reviews.
 
-## Status
-
-All core MVP features are implemented end-to-end on both backend and frontend: auth, listings,
-reservations, real-time chat, QR exchange confirmation, reviews, and reports/admin.
-
 ## Stack
 
 - **Frontend:** React, TypeScript, Vite, React Router, Axios, Tailwind CSS, shadcn/ui-style
