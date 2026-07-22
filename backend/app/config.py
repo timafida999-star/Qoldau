@@ -12,9 +12,17 @@ class Settings(BaseSettings):
     upload_dir: str = "uploads"
     max_upload_bytes: int = 5 * 1024 * 1024  # 5 MB per image
     rate_limit_enabled: bool = True
+    # Comma-separated list of allowed CORS origins. In the subpath deployment the
+    # frontend and API are same-origin, so this can be empty; kept configurable
+    # for the split-origin dev setup and any future needs.
+    cors_origins: str = "http://localhost:5173"
 
     class Config:
         env_file = ".env"
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @field_validator("jwt_secret_key")
     @classmethod

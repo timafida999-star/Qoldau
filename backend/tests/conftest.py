@@ -67,6 +67,33 @@ def db(_create_test_database):
     connection.close()
 
 
+class _PrefixedClient:
+    """Wraps TestClient to prepend the /api prefix, so tests can keep using
+    resource paths like "/auth/login" while the app serves everything under /api."""
+
+    def __init__(self, client: TestClient, prefix: str = "/api"):
+        self._client = client
+        self._prefix = prefix
+
+    def _path(self, url: str) -> str:
+        return f"{self._prefix}{url}"
+
+    def get(self, url, **kwargs):
+        return self._client.get(self._path(url), **kwargs)
+
+    def post(self, url, **kwargs):
+        return self._client.post(self._path(url), **kwargs)
+
+    def patch(self, url, **kwargs):
+        return self._client.patch(self._path(url), **kwargs)
+
+    def put(self, url, **kwargs):
+        return self._client.put(self._path(url), **kwargs)
+
+    def delete(self, url, **kwargs):
+        return self._client.delete(self._path(url), **kwargs)
+
+
 @pytest.fixture
 def client(db):
     """A TestClient whose requests share the test's rolled-back session."""
@@ -75,7 +102,7 @@ def client(db):
 
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
-        yield test_client
+        yield _PrefixedClient(test_client)
     app.dependency_overrides.clear()
 
 

@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from slowapi.errors import RateLimitExceeded
@@ -18,7 +18,16 @@ from app.routers import (
     users,
 )
 
-app = FastAPI(title="Qoldau API", version="0.1.0")
+# Everything the API serves lives under /api so it can be proxied cleanly behind
+# a reverse proxy (the internal nginx forwards /api/ to this service). Docs and
+# the OpenAPI schema move under /api too.
+app = FastAPI(
+    title="Qoldau API",
+    version="0.1.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
+)
 
 # Rate limiting: register the limiter on app.state and a 429 handler that keeps
 # CORS headers. Limits are applied per-endpoint via @limiter.limit decorators
@@ -28,28 +37,35 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.mount("/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
+# Uploaded files are served under /api/uploads. Stored image_url values are like
+# "/uploads/...", and the frontend prefixes them with the API base (".../api"),
+# so the two line up to ".../api/uploads/...".
+app.mount("/api/uploads", StaticFiles(directory=settings.upload_dir), name="uploads")
 
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(listings.router)
-app.include_router(reservations.router)
-app.include_router(reservations.listing_reservations_router)
-app.include_router(chat.router)
-app.include_router(chat.ws_router)
-app.include_router(exchanges.router)
-app.include_router(reviews.router)
-app.include_router(notifications.router)
-app.include_router(reports.router)
-app.include_router(admin.router)
+api = APIRouter(prefix="/api")
+api.include_router(auth.router)
+api.include_router(users.router)
+api.include_router(listings.router)
+api.include_router(reservations.router)
+api.include_router(reservations.listing_reservations_router)
+api.include_router(chat.router)
+api.include_router(chat.ws_router)
+api.include_router(exchanges.router)
+api.include_router(reviews.router)
+api.include_router(notifications.router)
+api.include_router(reports.router)
+api.include_router(admin.router)
 
 
-@app.get("/health")
+@api.get("/health")
 def health_check():
     return {"status": "ok"}
+
+
+app.include_router(api)

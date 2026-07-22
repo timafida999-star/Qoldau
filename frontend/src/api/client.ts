@@ -1,6 +1,10 @@
 import axios from "axios";
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// API base. In production it is left unset so it defaults to "<base>api" (e.g.
+// "/qoldau/api"), which is same-origin and follows whatever subpath the app is
+// served under. In dev it is set explicitly (VITE_API_URL) to the backend origin.
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || `${import.meta.env.BASE_URL}api`;
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -35,6 +39,11 @@ export function getAuthToken(): string | null {
 }
 
 export function wsUrl(path: string): string {
-  const base = API_BASE_URL.replace(/^http/, "ws");
-  return `${base}${path}`;
+  // API_BASE_URL may be absolute ("http://localhost:8000/api") in dev or a
+  // same-origin path ("/qoldau/api") in production. Build a ws/wss URL for both.
+  if (/^https?:/i.test(API_BASE_URL)) {
+    return `${API_BASE_URL.replace(/^http/i, "ws")}${path}`;
+  }
+  const proto = window.location.protocol === "https:" ? "wss" : "ws";
+  return `${proto}://${window.location.host}${API_BASE_URL}${path}`;
 }
