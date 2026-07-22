@@ -202,6 +202,13 @@
     "updated": "Profile updated.",
     "reviewsTitle": "Reviews ({{count}})",
     "noReviews": "No reviews yet.",
+    "noListings": "No active listings.",
+    "noGiven": "No items given away yet.",
+    "tabs": {
+      "listings": "Listings",
+      "given": "Given",
+      "reviews": "Reviews ({{count}})"
+    },
     "enterFullName": "Enter your full name"
   },
   "admin": {

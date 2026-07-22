@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ListingGrid } from "@/components/ListingGrid";
 import { ReportModal } from "@/components/ReportModal";
 import { StarRating } from "@/components/StarRating";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,6 +40,7 @@ export default function ProfilePage() {
 
   const [profile, setProfile] = useState<PublicUser | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [tab, setTab] = useState<"listings" | "given" | "reviews">("listings");
   const [loading, setLoading] = useState(true);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
@@ -168,27 +170,59 @@ export default function ProfilePage() {
       )}
 
       <div>
-        <h2 className="mb-4 text-lg font-medium">{t("profile.reviewsTitle", { count: reviews.length })}</h2>
-        {reviews.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
-            {t("profile.noReviews")}
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {reviews.map((review) => (
-              <Card key={review.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{review.reviewer.full_name}</span>
-                    <span className="text-xs text-muted-foreground">{formatDate(review.created_at)}</span>
-                  </div>
-                  <StarRating value={review.rating} readOnly size={16} />
-                  {review.comment && <p className="mt-2 text-sm text-foreground/80">{review.comment}</p>}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <div className="mb-6 flex gap-2 border-b border-border">
+          {(["listings", "given", "reviews"] as const).map((key) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
+                tab === key
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {key === "reviews"
+                ? t("profile.tabs.reviews", { count: reviews.length })
+                : t(`profile.tabs.${key}`)}
+            </button>
+          ))}
+        </div>
+
+        {tab === "listings" && (
+          <ListingGrid
+            filters={{ owner: profile.id, status: "available" }}
+            emptyText={t("profile.noListings")}
+          />
         )}
+
+        {tab === "given" && (
+          <ListingGrid
+            filters={{ owner: profile.id, status: "completed" }}
+            emptyText={t("profile.noGiven")}
+          />
+        )}
+
+        {tab === "reviews" &&
+          (reviews.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
+              {t("profile.noReviews")}
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {reviews.map((review) => (
+                <Card key={review.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{review.reviewer.full_name}</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(review.created_at)}</span>
+                    </div>
+                    <StarRating value={review.rating} readOnly size={16} />
+                    {review.comment && <p className="mt-2 text-sm text-foreground/80">{review.comment}</p>}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ))}
       </div>
     </div>
   );

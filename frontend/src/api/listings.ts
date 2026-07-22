@@ -5,6 +5,7 @@ export interface ListingFilters {
   category?: Category;
   status?: ListingStatus;
   search?: string;
+  owner?: string;
   page?: number;
   page_size?: number;
 }

@@ -202,6 +202,13 @@
     "updated": "Профиль обновлён.",
     "reviewsTitle": "Отзывы ({{count}})",
     "noReviews": "Пока нет отзывов.",
+    "noListings": "Нет активных объявлений.",
+    "noGiven": "Пока ничего не отдано.",
+    "tabs": {
+      "listings": "Объявления",
+      "given": "Отдано",
+      "reviews": "Отзывы ({{count}})"
+    },
     "enterFullName": "Введите имя и фамилию"
   },
   "admin": {

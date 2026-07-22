@@ -90,6 +90,21 @@ def test_page_size_capped(client, make_user):
     assert client.get("/listings", params={"page_size": 999}).status_code == 422
 
 
+def test_filter_by_owner(client, make_user, make_listing):
+    alice, bob = make_user(), make_user()
+    make_listing(alice, title="Alice item 1")
+    make_listing(alice, title="Alice item 2")
+    make_listing(bob, title="Bob item")
+
+    alice_listings = client.get("/listings", params={"owner": alice["id"]}).json()
+    assert alice_listings["total"] == 2
+    assert {x["title"] for x in alice_listings["items"]} == {"Alice item 1", "Alice item 2"}
+
+    # owner + status together drives the profile's "Given" tab.
+    given = client.get("/listings", params={"owner": alice["id"], "status": "completed"}).json()
+    assert given["total"] == 0  # nothing completed yet
+
+
 def test_owner_can_update_and_delete_listing(client, make_user, make_listing):
     owner = make_user()
     listing = make_listing(owner)

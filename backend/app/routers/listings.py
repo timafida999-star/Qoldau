@@ -34,6 +34,7 @@ def list_listings(
     category: Optional[Category] = None,
     status_filter: Optional[ListingStatus] = Query(default=None, alias="status"),
     search: Optional[str] = None,
+    owner: Optional[uuid.UUID] = None,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=12, ge=1, le=48),
     min_lat: Optional[float] = None,
@@ -48,6 +49,8 @@ def list_listings(
         query = query.filter(Listing.category == category)
     if status_filter:
         query = query.filter(Listing.status == status_filter)
+    if owner:
+        query = query.filter(Listing.owner_id == owner)
     if search:
         term = f"%{search.strip()}%"
         query = query.filter(Listing.title.ilike(term) | Listing.description.ilike(term))
