@@ -64,18 +64,6 @@ git pull
 docker compose up -d --build
 ```
 
-Alembic migrations run automatically on backend start. Then ask the server admins to point the
-Public Nginx at `qoldau-web`.
-
-## Restart / stop / update
-
-```bash
-docker compose restart qoldau-backend   # restart one service
-docker compose up -d --build            # rebuild + restart after a git pull
-docker compose down                      # stop (keeps data volumes)
-docker compose down -v                   # stop and DELETE the database + uploads (destructive)
-```
-
 ## Logs
 
 All services log to stdout/stderr (captured by Docker):
