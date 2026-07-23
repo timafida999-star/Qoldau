@@ -37,6 +37,12 @@ services:
         condition: service_healthy
     networks:
       - esg-network
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health').status==200 else 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   qoldau-web:
     build:
@@ -47,9 +53,15 @@ services:
     expose:
       - "80"
     depends_on:
-      - qoldau-backend
+      qoldau-backend:
+        condition: service_healthy
     networks:
       - esg-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   esg-network:
