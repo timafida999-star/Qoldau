@@ -1,9 +1,10 @@
 import uuid
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.user import UserPublic
+from app.websocket.limits import MAX_MESSAGE_CHARS
 
 
 class ChatMessageOut(BaseModel):
@@ -17,7 +18,7 @@ class ChatMessageOut(BaseModel):
 
 
 class ChatMessageCreate(BaseModel):
-    content: str
+    content: str = Field(min_length=1, max_length=MAX_MESSAGE_CHARS)
 
 
 class ChatOut(BaseModel):

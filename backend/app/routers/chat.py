@@ -12,6 +12,7 @@ from app.models.user import User
 from app.schemas.chat import ChatMessageOut, ChatOut
 from app.schemas.user import UserPublic
 from app.utils.notifications import notify_new_message
+from app.websocket.limits import MAX_MESSAGE_CHARS, message_limiter
 from app.websocket.manager import manager
 
 router = APIRouter(prefix="/chats", tags=["chat"])
@@ -98,7 +99,9 @@ async def chat_websocket(websocket: WebSocket, chat_id: uuid.UUID, token: str = 
                     continue
 
                 content = (data.get("content") or "").strip()
-                if not content:
+                if not content or len(content) > MAX_MESSAGE_CHARS:
+                    continue
+                if not message_limiter.allow(user.id):
                     continue
 
                 message = ChatMessage(chat_id=chat_id, sender_id=user.id, content=content)
