@@ -93,6 +93,9 @@ class _PrefixedClient:
     def delete(self, url, **kwargs):
         return self._client.delete(self._path(url), **kwargs)
 
+    def websocket_connect(self, url, **kwargs):
+        return self._client.websocket_connect(self._path(url), **kwargs)
+
 
 @pytest.fixture
 def client(db):
