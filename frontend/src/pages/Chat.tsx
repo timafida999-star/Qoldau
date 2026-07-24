@@ -10,6 +10,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import type { ChatInfo, ChatMessage } from "@/types";
 
+// Keep in sync with MAX_MESSAGE_CHARS in backend/app/websocket/limits.py
+const MAX_MESSAGE_CHARS = 2000;
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleString(undefined, {
     month: "short",
@@ -97,16 +100,24 @@ export default function ChatPage() {
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSend} className="mt-4 flex gap-2 border-t border-border pt-4">
-        <Input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder={t("chat.placeholder")}
-          autoFocus
-        />
-        <Button type="submit" size="icon" disabled={!draft.trim()}>
-          <Send className="h-4 w-4" />
-        </Button>
+      <form onSubmit={handleSend} className="mt-4 border-t border-border pt-4">
+        <div className="flex gap-2">
+          <Input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={t("chat.placeholder")}
+            maxLength={MAX_MESSAGE_CHARS}
+            autoFocus
+          />
+          <Button type="submit" size="icon" disabled={!draft.trim()}>
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+        {draft.length > MAX_MESSAGE_CHARS * 0.9 && (
+          <p className="mt-1 text-right text-xs text-muted-foreground">
+            {draft.length} / {MAX_MESSAGE_CHARS}
+          </p>
+        )}
       </form>
     </div>
   );
