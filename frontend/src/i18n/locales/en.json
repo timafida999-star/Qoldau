@@ -44,7 +44,8 @@
     "registerFailed": "Registration failed. Please try again.",
     "haveAccount": "Already have an account?",
     "invalidEmail": "Enter a valid email",
-    "shortPassword": "Password must be at least 6 characters",
+    "shortPassword": "Password must be at least 8 characters",
+    "enterPassword": "Enter your password",
     "enterFullName": "Enter your full name"
   },
   "home": {

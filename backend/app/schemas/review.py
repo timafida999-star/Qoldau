@@ -4,13 +4,14 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.fields import Comment
 from app.schemas.user import UserPublic
 
 
 class ReviewCreate(BaseModel):
     exchange_id: uuid.UUID
     rating: int = Field(ge=1, le=5)
-    comment: Optional[str] = None
+    comment: Optional[Comment] = None
 
 
 class ReviewOut(BaseModel):

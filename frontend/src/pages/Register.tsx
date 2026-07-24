@@ -20,9 +20,9 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const registerSchema = z.object({
-    full_name: z.string().min(2, t("auth.enterFullName")),
+    full_name: z.string().trim().min(2, t("auth.enterFullName")).max(100),
     email: z.string().email(t("auth.invalidEmail")),
-    password: z.string().min(6, t("auth.shortPassword")),
+    password: z.string().min(8, t("auth.shortPassword")).max(128),
   });
 
   const {
@@ -56,17 +56,17 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="full_name">{t("auth.fullNameLabel")}</Label>
-              <Input id="full_name" placeholder={t("auth.namePlaceholder")} {...register("full_name")} />
+              <Input id="full_name" maxLength={100} placeholder={t("auth.namePlaceholder")} {...register("full_name")} />
               {errors.full_name && <p className="text-sm text-destructive">{errors.full_name.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.emailLabel")}</Label>
-              <Input id="email" type="email" placeholder={t("auth.emailPlaceholder")} {...register("email")} />
+              <Input id="email" type="email" maxLength={254} placeholder={t("auth.emailPlaceholder")} {...register("email")} />
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.passwordLabel")}</Label>
-              <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+              <Input id="password" type="password" maxLength={128} placeholder="••••••••" {...register("password")} />
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
             {serverError && <p className="text-sm text-destructive">{serverError}</p>}

@@ -2,9 +2,16 @@ import uuid
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from app.models.listing import Category, Condition, ListingStatus
+from app.schemas.fields import (
+    AddressText,
+    Latitude,
+    ListingDescription,
+    ListingTitle,
+    Longitude,
+)
 from app.schemas.user import UserPublic
 
 
@@ -17,23 +24,23 @@ class ListingImageOut(BaseModel):
 
 
 class ListingCreate(BaseModel):
-    title: str = Field(min_length=3, max_length=120)
-    description: str = Field(min_length=10)
+    title: ListingTitle
+    description: ListingDescription
     category: Category
     condition: Condition
-    latitude: float
-    longitude: float
-    address_text: Optional[str] = None
+    latitude: Latitude
+    longitude: Longitude
+    address_text: Optional[AddressText] = None
 
 
 class ListingUpdate(BaseModel):
-    title: Optional[str] = Field(default=None, min_length=3, max_length=120)
-    description: Optional[str] = Field(default=None, min_length=10)
+    title: Optional[ListingTitle] = None
+    description: Optional[ListingDescription] = None
     category: Optional[Category] = None
     condition: Optional[Condition] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    address_text: Optional[str] = None
+    latitude: Optional[Latitude] = None
+    longitude: Optional[Longitude] = None
+    address_text: Optional[AddressText] = None
 
 
 class ListingOut(BaseModel):

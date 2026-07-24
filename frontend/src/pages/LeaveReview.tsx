@@ -95,6 +95,7 @@ export default function LeaveReviewPage() {
                 id="comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
+                maxLength={1000}
                 placeholder={t("review.commentPlaceholder")}
               />
             </div>
