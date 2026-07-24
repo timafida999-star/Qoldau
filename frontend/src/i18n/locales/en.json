@@ -16,6 +16,11 @@
   "errors": {
     "tooManyRequests": "Too many attempts. Please wait a minute and try again."
   },
+  "notFound": {
+    "title": "Page not found",
+    "description": "That link doesn't lead anywhere. It may have been moved or removed.",
+    "backHome": "Back to listings"
+  },
   "common": {
     "loading": "Loading...",
     "saving": "Saving...",
