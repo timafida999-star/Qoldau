@@ -22,8 +22,17 @@ class ChatConnectionManager:
             self.active_connections.pop(chat_id, None)
 
     async def broadcast(self, chat_id: uuid.UUID, message: dict) -> None:
-        for connection in self.active_connections.get(chat_id, []):
-            await connection.send_json(message)
+        """Send to every live socket in the room, dropping the ones that fail.
+        """
+        dead: List[WebSocket] = []
+        for connection in list(self.active_connections.get(chat_id, [])):
+            try:
+                await connection.send_json(message)
+            except Exception:  # noqa: BLE001 - one bad socket must not break the room
+                dead.append(connection)
+
+        for connection in dead:
+            self.disconnect(chat_id, connection)
 
 
 manager = ChatConnectionManager()

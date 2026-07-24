@@ -89,7 +89,14 @@ async def chat_websocket(websocket: WebSocket, chat_id: uuid.UUID, token: str = 
         await manager.connect(chat_id, websocket)
         try:
             while True:
-                data = await websocket.receive_json()
+                try:
+                    data = await websocket.receive_json()
+                except (ValueError, KeyError):
+                    continue
+
+                if not isinstance(data, dict):
+                    continue
+
                 content = (data.get("content") or "").strip()
                 if not content:
                     continue
@@ -120,6 +127,8 @@ async def chat_websocket(websocket: WebSocket, chat_id: uuid.UUID, token: str = 
                     },
                 )
         except WebSocketDisconnect:
+            pass
+        finally:
             manager.disconnect(chat_id, websocket)
     finally:
         db.close()
