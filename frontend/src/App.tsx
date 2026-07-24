@@ -13,6 +13,7 @@ import HomePage from "@/pages/Home";
 import LeaveReviewPage from "@/pages/LeaveReview";
 import ListingDetailPage from "@/pages/ListingDetail";
 import LoginPage from "@/pages/Login";
+import NotFoundPage from "@/pages/NotFound";
 import ProfilePage from "@/pages/Profile";
 import RegisterPage from "@/pages/Register";
 import ReservationsPage from "@/pages/Reservations";
@@ -84,6 +85,7 @@ export default function App() {
               </AdminRoute>
             }
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <Footer />

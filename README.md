@@ -87,15 +87,15 @@ npm run dev
 
 ## Testing
 
-The backend has a pytest suite covering auth, listings, the full reservation → QR exchange →
-review lifecycle, notifications, admin/reports, pagination, and the security hardening (JWT secret
-validation, image-upload sanitising, rate limiting). Tests run against a dedicated `qoldau_test`
-database and roll back after each test.
+The backend has a pytest suite of **108 tests**. They run against a dedicated `qoldau_test`
+database, and each test is wrapped in a transaction that is rolled back afterwards, so they are
+fully isolated and leave no data behind.
 
 ```bash
 docker compose exec backend pip install -r requirements-dev.txt
 docker compose exec backend pytest
 ```
+Run a single suite with `docker compose exec backend pytest tests/test_auth.py`.
 
 ## Logs
 
