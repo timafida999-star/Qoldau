@@ -130,7 +130,9 @@
     "cancel": "Cancel",
     "openChat": "Open chat",
     "showQr": "Show QR",
-    "confirmExchange": "Confirm exchange"
+    "confirmExchange": "Confirm exchange",
+    "cancelExchange": "Cancel exchange",
+    "confirmCancelExchange": "Cancel this exchange? The item becomes available again and the other person is notified."
   },
   "chat": {
     "loading": "Loading chat...",

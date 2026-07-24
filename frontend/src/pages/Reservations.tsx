@@ -48,6 +48,11 @@ export default function ReservationsPage() {
     }
   }
 
+  async function handleCancelAccepted(reservation: Reservation) {
+    if (!confirm(t("reservations.confirmCancelExchange"))) return;
+    await handleAction(reservation, "cancel");
+  }
+
   const filtered = reservations.filter((r) => r.role === tab.replace("received", "owner").replace("sent", "requester"));
 
   return (
@@ -142,6 +147,20 @@ export default function ReservationsPage() {
                     <Button size="sm" variant="outline" onClick={() => navigate(`/exchanges/${reservation.exchange_id}`)}>
                       <QrCode className="mr-1 h-4 w-4" />
                       {tab === "received" ? t("reservations.showQr") : t("reservations.confirmExchange")}
+                    </Button>
+                  )}
+                  {/* Either side can back out until the handover actually happens.
+                      Once the listing reads "completed" the exchange is done and
+                      the backend refuses to cancel, so drop the button. */}
+                  {reservation.status === "accepted" && reservation.listing.status !== "completed" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={actingId === reservation.id}
+                      onClick={() => handleCancelAccepted(reservation)}
+                    >
+                      <X className="mr-1 h-4 w-4" />
+                      {t("reservations.cancelExchange")}
                     </Button>
                   )}
                 </div>
