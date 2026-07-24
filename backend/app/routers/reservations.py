@@ -8,7 +8,7 @@ from app.auth.dependencies import get_current_user
 from app.database.session import get_db
 from app.rate_limit import limiter
 from app.models.chat import Chat
-from app.models.exchange import Exchange
+from app.models.exchange import Exchange, ExchangeStatus
 from app.models.listing import Listing, ListingStatus
 from app.models.notification import NotificationType
 from app.models.reservation import Reservation, ReservationStatus
@@ -171,14 +171,35 @@ def update_reservation(
             )
 
     elif payload.action == "cancel":
-        if not is_requester:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the requester can cancel")
-        if reservation.status != ReservationStatus.PENDING:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Only pending requests can be cancelled")
+        if not (is_owner or is_requester):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, detail="Not a participant of this reservation"
+            )
+
+        if reservation.status == ReservationStatus.PENDING:
+            # An owner rejecting a request they never agreed to is a decline.
+            if not is_requester:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN, detail="Only the requester can cancel a pending request"
+                )
+        elif reservation.status == ReservationStatus.ACCEPTED:
+            if reservation.exchange and reservation.exchange.status == ExchangeStatus.COMPLETED:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="This exchange is already completed"
+                )
+            if listing.status == ListingStatus.RESERVED:
+                listing.status = ListingStatus.AVAILABLE
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only pending or accepted reservations can be cancelled",
+            )
+
         reservation.status = ReservationStatus.CANCELLED
         notify(
             db,
-            user_id=listing.owner_id,
+            # Tell whichever participant did not press the button.
+            user_id=reservation.requester_id if is_owner else listing.owner_id,
             type=NotificationType.RESERVATION_CANCELLED,
             actor_name=current_user.full_name,
             entity_title=listing.title,

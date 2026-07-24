@@ -9,6 +9,7 @@ from app.database.session import get_db
 from app.models.exchange import Exchange, ExchangeStatus
 from app.models.listing import ListingStatus
 from app.models.notification import NotificationType
+from app.models.reservation import ReservationStatus
 from app.models.user import User
 from app.schemas.exchange import ExchangeOut, ExchangeVerifyRequest
 from app.utils.notifications import notify
@@ -47,6 +48,20 @@ def ensure_participant(exchange: Exchange, user_id: uuid.UUID) -> None:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not a participant of this exchange")
 
 
+def ensure_reservation_active(exchange: Exchange) -> None:
+    """The QR is only meaningful while the reservation is still accepted.
+
+    Cancelling an accepted reservation releases the listing back to "available"
+    but leaves this exchange row in place. Without this check the old QR code
+    would still work, and scanning it would flip the listing to "completed"
+    after it had already been handed back out.
+    """
+    if exchange.reservation.status != ReservationStatus.ACCEPTED:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="This reservation is no longer active"
+        )
+
+
 @router.get("/{exchange_id}", response_model=ExchangeOut)
 def get_exchange(exchange_id: uuid.UUID, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     exchange = get_exchange_or_404(exchange_id, db)
@@ -64,6 +79,8 @@ def get_exchange_qr(exchange_id: uuid.UUID, current_user: User = Depends(get_cur
 
     if exchange.status == ExchangeStatus.COMPLETED:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Exchange already completed")
+
+    ensure_reservation_active(exchange)
 
     png_bytes = generate_qr_png(str(exchange.qr_uuid))
     return Response(content=png_bytes, media_type="image/png")
@@ -84,6 +101,8 @@ def verify_exchange(
 
     if exchange.status == ExchangeStatus.COMPLETED:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Exchange already completed")
+
+    ensure_reservation_active(exchange)
 
     exchange.status = ExchangeStatus.COMPLETED
     exchange.completed_at = datetime.now(timezone.utc)
