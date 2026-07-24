@@ -33,9 +33,9 @@ export default function ProfilePage() {
   const isOwnProfile = Boolean(viewer && viewer.id === userId);
 
   const profileSchema = z.object({
-    full_name: z.string().min(2, t("profile.enterFullName")),
-    phone: z.string().optional(),
-    bio: z.string().optional(),
+    full_name: z.string().trim().min(2, t("profile.enterFullName")).max(100),
+    phone: z.string().max(32).optional(),
+    bio: z.string().max(500).optional(),
   });
 
   const [profile, setProfile] = useState<PublicUser | null>(null);
@@ -149,16 +149,16 @@ export default function ProfilePage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="full_name">{t("profile.fullName")}</Label>
-                <Input id="full_name" {...register("full_name")} />
+                <Input id="full_name" maxLength={100} {...register("full_name")} />
                 {errors.full_name && <p className="text-sm text-destructive">{errors.full_name.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">{t("profile.phone")}</Label>
-                <Input id="phone" placeholder={t("profile.phonePlaceholder")} {...register("phone")} />
+                <Input id="phone" maxLength={32} placeholder={t("profile.phonePlaceholder")} {...register("phone")} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bio">{t("profile.bio")}</Label>
-                <Textarea id="bio" placeholder={t("profile.bioPlaceholder")} {...register("bio")} />
+                <Textarea id="bio" maxLength={500} placeholder={t("profile.bioPlaceholder")} {...register("bio")} />
               </div>
               {saveMessage && <p className="text-sm text-primary">{saveMessage}</p>}
               <Button type="submit" disabled={isSubmitting}>

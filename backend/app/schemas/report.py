@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
 from app.models.report import ReportReason, ReportStatus, ReportTargetType
+from app.schemas.fields import Comment
 from app.schemas.user import UserPublic
 
 
@@ -12,7 +13,7 @@ class ReportCreate(BaseModel):
     target_type: ReportTargetType
     target_id: uuid.UUID
     reason: ReportReason
-    description: Optional[str] = None
+    description: Optional[Comment] = None
 
 
 class ReportOut(BaseModel):

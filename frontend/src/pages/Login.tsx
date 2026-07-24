@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   const loginSchema = z.object({
     email: z.string().email(t("auth.invalidEmail")),
-    password: z.string().min(6, t("auth.shortPassword")),
+    password: z.string().min(1, t("auth.enterPassword")).max(128),
   });
 
   const {
@@ -55,12 +55,12 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.emailLabel")}</Label>
-              <Input id="email" type="email" placeholder={t("auth.emailPlaceholder")} {...register("email")} />
+              <Input id="email" type="email" maxLength={254} placeholder={t("auth.emailPlaceholder")} {...register("email")} />
               {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t("auth.passwordLabel")}</Label>
-              <Input id="password" type="password" placeholder="••••••••" {...register("password")} />
+              <Input id="password" type="password" maxLength={128} placeholder="••••••••" {...register("password")} />
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
             {serverError && <p className="text-sm text-destructive">{serverError}</p>}

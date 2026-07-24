@@ -85,6 +85,7 @@ export function ReportModal({ targetType, targetId, triggerLabel }: ReportModalP
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                maxLength={1000}
                 placeholder={t("report.detailsPlaceholder")}
               />
             </div>

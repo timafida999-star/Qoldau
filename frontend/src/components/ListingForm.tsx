@@ -37,11 +37,11 @@ export function ListingForm({ initialListing }: ListingFormProps) {
   const isEdit = Boolean(initialListing);
 
   const listingSchema = z.object({
-    title: z.string().min(3, t("form.shortTitle")).max(120),
-    description: z.string().min(10, t("form.shortDescription")),
+    title: z.string().trim().min(3, t("form.shortTitle")).max(120),
+    description: z.string().trim().min(10, t("form.shortDescription")).max(5000),
     category: z.enum(["electronics", "furniture", "clothes", "books", "kitchen", "kids", "other"]),
     condition: z.enum(["new", "like_new", "good", "fair", "worn"]),
-    address_text: z.string().optional(),
+    address_text: z.string().max(200).optional(),
   });
 
   const [position, setPosition] = useState<[number, number]>(
@@ -152,7 +152,7 @@ export function ListingForm({ initialListing }: ListingFormProps) {
 
       <div className="space-y-2">
         <Label htmlFor="address_text">{t("form.addressLabel")}</Label>
-        <Input id="address_text" placeholder={t("form.addressPlaceholder")} {...register("address_text")} />
+        <Input id="address_text" maxLength={200} placeholder={t("form.addressPlaceholder")} {...register("address_text")} />
       </div>
 
       <div className="space-y-2">

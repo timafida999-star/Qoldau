@@ -4,23 +4,25 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, ConfigDict
 
+from app.schemas.fields import Bio, Email, FullName, NewPassword, Phone
+
 
 class UserBase(BaseModel):
-    full_name: str
-    phone: Optional[str] = None
-    bio: Optional[str] = None
+    full_name: FullName
+    phone: Optional[Phone] = None
+    bio: Optional[Bio] = None
 
 
 class UserCreate(BaseModel):
-    email: EmailStr
-    password: str
-    full_name: str
+    email: Email
+    password: NewPassword
+    full_name: FullName
 
 
 class UserUpdate(BaseModel):
-    full_name: Optional[str] = None
-    phone: Optional[str] = None
-    bio: Optional[str] = None
+    full_name: Optional[FullName] = None
+    phone: Optional[Phone] = None
+    bio: Optional[Bio] = None
 
 
 class UserPublic(BaseModel):
