@@ -1,4 +1,4 @@
-# Qoldau — Production (deploy branch)
+# Qoldau - Production (deploy branch)
 
 A platform for giving away useful items for free: users publish listings, others reserve them,
 arrange the handoff through in-app chat, confirm the exchange with a QR code, and leave reviews.
