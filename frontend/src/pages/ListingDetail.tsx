@@ -101,7 +101,7 @@ export default function ListingDetailPage() {
 
         <div>
           <div className="flex items-start justify-between gap-3">
-            <h1 className="text-2xl font-semibold">{listing.title}</h1>
+            <h1 className="min-w-0 break-words text-2xl font-semibold">{listing.title}</h1>
             <Badge variant={STATUS_BADGE_VARIANT[listing.status]}>{t(`status.${listing.status}`)}</Badge>
           </div>
 
@@ -111,7 +111,7 @@ export default function ListingDetailPage() {
             <span>{t(`condition.${listing.condition}`)}</span>
           </div>
 
-          <p className="mt-4 whitespace-pre-line text-foreground/90">{listing.description}</p>
+          <p className="mt-4 whitespace-pre-line break-words text-foreground/90">{listing.description}</p>
 
           <Card className="mt-6">
             <CardContent className="flex items-center gap-3 p-4">

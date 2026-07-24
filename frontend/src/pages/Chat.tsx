@@ -84,8 +84,11 @@ export default function ChatPage() {
           const isMine = message.sender_id === user?.id;
           return (
             <div key={message.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+              {
+                
+              }
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm shadow-soft ${
+                className={`min-w-0 max-w-[75%] break-words rounded-2xl px-4 py-2 text-sm shadow-soft ${
                   isMine ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
                 }`}
               >
