@@ -8,7 +8,7 @@ from app.database.session import get_db
 from app.models.user import User
 from app.rate_limit import limiter
 from app.schemas.user import UserMe, UserPublic, UserUpdate
-from app.utils.files import save_upload
+from app.utils.files import AVATAR_MAX_SIDE, save_upload
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -45,8 +45,7 @@ def upload_avatar(
     if file.content_type not in {"image/jpeg", "image/png", "image/webp"}:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported image type")
 
-    url = save_upload(file, "avatars")
-    current_user.avatar_url = url
+    current_user.avatar_url = save_upload(file, "avatars", max_side=AVATAR_MAX_SIDE).url
     db.commit()
     db.refresh(current_user)
     return current_user

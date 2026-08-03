@@ -39,6 +39,7 @@ def to_exchange_out(exchange: Exchange, viewer: User) -> ExchangeOut:
         owner_id=listing.owner_id,
         requester_id=exchange.reservation.requester_id,
         role=role,
+        qr_code=str(exchange.qr_uuid) if role == "owner" else None,
     )
 
 

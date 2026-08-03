@@ -15,7 +15,7 @@ from app.models.listing import Category, Condition, Listing, ListingImage, Listi
 from app.models.reservation import Reservation, ReservationStatus
 from app.models.user import User
 from app.schemas.listing import ListingCreate, ListingImageOut, ListingOut, ListingPage, ListingSummary, ListingUpdate
-from app.utils.files import save_upload
+from app.utils.files import THUMB_SIDE, save_upload
 from app.utils.geo import EARTH_RADIUS_KM, approximate_location, haversine_km
 
 router = APIRouter(prefix="/listings", tags=["listings"])
@@ -153,6 +153,14 @@ def list_listings(
     order_by = Listing.created_at.desc()
     if near_active:
         radius = radius_km if radius_km is not None else DEFAULT_NEAR_RADIUS_KM
+        # Cheap bounding-box prefilter so the lat/lng index does the heavy
+        # lifting; the haversine below is the exact cut inside the box.
+        lat_delta = radius / 111.32
+        lng_delta = radius / (111.32 * max(math.cos(math.radians(near_lat)), 0.01))
+        query = query.filter(
+            Listing.latitude.between(near_lat - lat_delta, near_lat + lat_delta),
+            Listing.longitude.between(near_lng - lng_delta, near_lng + lng_delta),
+        )
         distance = _distance_km_expr(near_lat, near_lng)
         query = query.filter(distance <= radius)
         # "Near me" reads as "closest first", not "newest first".
@@ -269,8 +277,13 @@ def upload_listing_images(
     for offset, file in enumerate(files, start=1):
         if file.content_type not in ALLOWED_IMAGE_TYPES:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Unsupported image type: {file.content_type}")
-        url = save_upload(file, "listings")
-        image = ListingImage(listing_id=listing.id, image_url=url, position=current_max_position + offset)
+        stored = save_upload(file, "listings", thumb_side=THUMB_SIDE)
+        image = ListingImage(
+            listing_id=listing.id,
+            image_url=stored.url,
+            thumb_url=stored.thumb_url,
+            position=current_max_position + offset,
+        )
         db.add(image)
         created_images.append(image)
 

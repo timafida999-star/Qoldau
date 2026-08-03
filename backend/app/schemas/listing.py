@@ -20,6 +20,8 @@ class ListingImageOut(BaseModel):
 
     id: uuid.UUID
     image_url: str
+    # Null for images uploaded before thumbnails existed; clients fall back to image_url.
+    thumb_url: Optional[str] = None
     position: int
 
 

@@ -24,3 +24,7 @@ class ExchangeOut(BaseModel):
     owner_id: uuid.UUID
     requester_id: uuid.UUID
     role: Optional[str] = None
+    # The confirmation code as text, so the owner can read it out loud when the
+    # recipient's camera fails. Only ever populated for the owner: giving it to
+    # the recipient would let them complete the exchange without meeting.
+    qr_code: Optional[str] = None
