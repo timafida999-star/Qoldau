@@ -67,3 +67,15 @@
   z-index: 0;
   isolation: isolate;
 }
+
+/* The chat is a fixed-height screen (viewport minus the 4rem navbar); with a
+   plain 100vh the mobile browser chrome makes the page scroll and slide the
+   messages under the sticky navbar. dvh tracks the real visible height. */
+.chat-screen {
+  height: calc(100vh - 4rem);
+}
+@supports (height: 100dvh) {
+  .chat-screen {
+    height: calc(100dvh - 4rem);
+  }
+}

@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { MapPicker } from "@/components/MapPicker";
 import type { Category, Condition, Listing } from "@/types";
 import { CATEGORY_VALUES, CONDITION_VALUES } from "@/utils/listingOptions";
+import { apiErrorMessage } from "@/lib/apiError";
 
 type ListingFormValues = {
   title: string;
@@ -105,7 +106,7 @@ export function ListingForm({ initialListing }: ListingFormProps) {
 
       navigate(`/listings/${listing.id}`);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || t("common.somethingWrong"));
+      setError(apiErrorMessage(err, t("common.somethingWrong")));
     }
   }
 

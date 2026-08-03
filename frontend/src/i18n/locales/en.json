@@ -11,10 +11,14 @@
     "admin": "Admin",
     "logout": "Log out",
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "menu": "Menu"
   },
   "errors": {
-    "tooManyRequests": "Too many attempts. Please wait a minute and try again."
+    "tooManyRequests": "Too many attempts. Please wait a minute and try again.",
+    "crashTitle": "Something went wrong",
+    "crashBody": "An unexpected error occurred. Reloading the page usually helps.",
+    "crashReload": "Reload page"
   },
   "notFound": {
     "title": "Page not found",
@@ -178,7 +182,9 @@
     "confirming": "Confirming...",
     "confirmExchange": "Confirm exchange",
     "codeMismatch": "That code doesn't match. Please try again.",
-    "qrAlt": "Exchange QR code"
+    "qrAlt": "Exchange QR code",
+    "copyCode": "Copy code",
+    "ownerCodeHint": "If the camera doesn't work, read this code out loud or send it in the chat."
   },
   "qrScanner": {
     "cameraError": "Could not access the camera. You can enter the code manually instead.",
@@ -213,7 +219,6 @@
   },
   "profile": {
     "notFound": "User not found.",
-    "reviewsSuffix": "reviews",
     "changePhoto": "Change photo",
     "uploading": "Uploading...",
     "reportUser": "Report this user",
@@ -233,7 +238,9 @@
       "given": "Given",
       "reviews": "Reviews ({{count}})"
     },
-    "enterFullName": "Enter your full name"
+    "enterFullName": "Enter your full name",
+    "reviewCount_one": "{{count}} review",
+    "reviewCount_other": "{{count}} reviews"
   },
   "admin": {
     "title": "Admin — Reports",

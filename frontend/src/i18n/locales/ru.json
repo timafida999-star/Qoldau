@@ -11,10 +11,14 @@
     "admin": "Админ",
     "logout": "Выйти",
     "login": "Войти",
-    "signup": "Регистрация"
+    "signup": "Регистрация",
+    "menu": "Меню"
   },
   "errors": {
-    "tooManyRequests": "Слишком много попыток. Подождите минуту и попробуйте снова."
+    "tooManyRequests": "Слишком много попыток. Подождите минуту и попробуйте снова.",
+    "crashTitle": "Что-то пошло не так",
+    "crashBody": "Произошла непредвиденная ошибка. Обычно помогает перезагрузка страницы.",
+    "crashReload": "Перезагрузить страницу"
   },
   "notFound": {
     "title": "Страница не найдена",
@@ -77,12 +81,12 @@
     "empty": "Уведомлений пока нет.",
     "types": {
       "reservation_requested": "{{actor}} хочет забрать «{{title}}»",
-      "reservation_accepted": "{{actor}} принял ваш запрос на «{{title}}»",
-      "reservation_declined": "{{actor}} отклонил ваш запрос на «{{title}}»",
-      "reservation_cancelled": "{{actor}} отменил свой запрос на «{{title}}»",
+      "reservation_accepted": "Ваш запрос на «{{title}}» принят — {{actor}}",
+      "reservation_declined": "Ваш запрос на «{{title}}» отклонён — {{actor}}",
+      "reservation_cancelled": "Бронь на «{{title}}» отменена — {{actor}}",
       "message_received": "Новое сообщение от {{actor}}",
-      "exchange_completed": "{{actor}} подтвердил передачу «{{title}}» — оставьте отзыв",
-      "review_received": "{{actor}} оставил вам отзыв"
+      "exchange_completed": "Передача «{{title}}» подтверждена — оставьте отзыв",
+      "review_received": "Новый отзыв от {{actor}}"
     }
   },
   "footer": {
@@ -180,7 +184,9 @@
     "confirming": "Подтверждение...",
     "confirmExchange": "Подтвердить передачу",
     "codeMismatch": "Код не совпадает. Попробуйте ещё раз.",
-    "qrAlt": "QR-код передачи"
+    "qrAlt": "QR-код передачи",
+    "copyCode": "Скопировать код",
+    "ownerCodeHint": "Если камера не работает, продиктуйте этот код или отправьте его в чате."
   },
   "qrScanner": {
     "cameraError": "Не удалось получить доступ к камере. Вы можете ввести код вручную.",
@@ -215,7 +221,6 @@
   },
   "profile": {
     "notFound": "Пользователь не найден.",
-    "reviewsSuffix": "отзывов",
     "changePhoto": "Изменить фото",
     "uploading": "Загрузка...",
     "reportUser": "Пожаловаться на пользователя",
@@ -235,7 +240,11 @@
       "given": "Отдано",
       "reviews": "Отзывы ({{count}})"
     },
-    "enterFullName": "Введите имя и фамилию"
+    "enterFullName": "Введите имя и фамилию",
+    "reviewCount_one": "{{count}} отзыв",
+    "reviewCount_few": "{{count}} отзыва",
+    "reviewCount_many": "{{count}} отзывов",
+    "reviewCount_other": "{{count}} отзыва"
   },
   "admin": {
     "title": "Админ — Жалобы",

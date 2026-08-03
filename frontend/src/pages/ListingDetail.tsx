@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ReportModal } from "@/components/ReportModal";
 import { useAuth } from "@/hooks/useAuth";
+import { apiErrorMessage } from "@/lib/apiError";
 import type { Listing } from "@/types";
 import { STATUS_BADGE_VARIANT } from "@/utils/listingOptions";
 
@@ -62,9 +63,7 @@ export default function ListingDetailPage() {
       setReserveSent(true);
       setRequestFormOpen(false);
     } catch (err: any) {
-      const detail = err?.response?.data?.detail;
-      // Validation errors (422) arrive as an array of objects — never render those raw.
-      setReserveError(typeof detail === "string" ? detail : t("listing.reserveError"));
+      setReserveError(apiErrorMessage(err, t("listing.reserveError")));
     } finally {
       setReserving(false);
     }
@@ -104,7 +103,7 @@ export default function ListingDetailPage() {
                     index === activeImage ? "border-primary" : "border-transparent"
                   }`}
                 >
-                  <img src={`${API_BASE_URL}${img.image_url}`} alt="" className="h-full w-full object-contain" />
+                  <img src={`${API_BASE_URL}${img.thumb_url || img.image_url}`} alt="" className="h-full w-full object-contain" />
                 </button>
               ))}
             </div>

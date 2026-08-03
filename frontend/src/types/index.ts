@@ -59,6 +59,8 @@ export type ListingStatus = "available" | "reserved" | "completed";
 export interface ListingImage {
   id: string;
   image_url: string;
+  /** Smaller copy for cards; null for images uploaded before thumbnails existed. */
+  thumb_url?: string | null;
   position: number;
 }
 
@@ -156,6 +158,8 @@ export interface Exchange {
   owner_id: string;
   requester_id: string;
   role: "owner" | "requester";
+  /** Confirmation code as text; present only when the viewer is the owner. */
+  qr_code?: string | null;
 }
 
 export interface Review {

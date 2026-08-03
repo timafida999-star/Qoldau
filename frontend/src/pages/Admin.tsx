@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { Report } from "@/types";
 
 export default function AdminPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [reports, setReports] = useState<Report[]>([]);
   const [tab, setTab] = useState<"open" | "resolved">("open");
   const [loading, setLoading] = useState(true);
@@ -98,7 +98,7 @@ export default function AdminPage() {
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">
                       {t("admin.reportedBy", { name: report.reporter.full_name })} &middot;{" "}
-                      {new Date(report.created_at).toLocaleDateString()}
+                      {new Date(report.created_at).toLocaleDateString(i18n.language)}
                     </p>
                     {report.description && <p className="mt-2 text-sm text-foreground/90">{report.description}</p>}
                     <Link
