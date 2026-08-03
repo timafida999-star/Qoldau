@@ -56,6 +56,10 @@ class ListingOut(BaseModel):
     status: ListingStatus
     latitude: float
     longitude: float
+    # True when the coordinates above are deliberately blurred (see utils/geo.py):
+    # only the owner, an admin, or a requester with an accepted reservation gets
+    # the exact meeting point.
+    location_is_approximate: bool = False
     address_text: Optional[str] = None
     images: List[ListingImageOut] = []
     created_at: datetime
@@ -72,6 +76,9 @@ class ListingSummary(BaseModel):
     status: ListingStatus
     latitude: float
     longitude: float
+    location_is_approximate: bool = False
+    # Filled only when the request filters by proximity (near_lat/near_lng).
+    distance_km: Optional[float] = None
     address_text: Optional[str] = None
     images: List[ListingImageOut] = []
     created_at: datetime
