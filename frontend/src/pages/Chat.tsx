@@ -66,8 +66,9 @@ export default function ChatPage() {
     e.preventDefault();
     const content = draft.trim();
     if (!content) return;
-    sendMessage(content);
-    setDraft("");
+    // Keep the draft if the socket wasn't open: clearing it unconditionally is
+    // how a message disappears with no trace and no error.
+    if (sendMessage(content)) setDraft("");
   }
 
   if (loading) {

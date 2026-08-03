@@ -25,18 +25,28 @@ export function useChatSocket(chatId: string | undefined, onMessage: (message: C
     function connect() {
       if (disposed) return;
       const token = getAuthToken();
-      socket = new WebSocket(wsUrl(`/ws/chats/${chatId}?token=${token}`));
-      socketRef.current = socket;
+      // Bound to this attempt: `socket` below is reassigned on every reconnect,
+      // so the handlers must close over their own instance, not the latest one.
+      const ws = new WebSocket(wsUrl(`/ws/chats/${chatId}?token=${token}`));
+      socket = ws;
+      socketRef.current = ws;
 
-      socket.onopen = () => {
+      ws.onopen = () => {
         attempt = 0;
         setIsConnected(true);
       };
-      socket.onmessage = (event) => {
+      ws.onmessage = (event) => {
         const message: ChatMessage = JSON.parse(event.data);
         onMessageRef.current(message);
       };
-      socket.onclose = () => {
+      ws.onclose = () => {
+        // A socket that has already been replaced must not touch the state of
+        // the one that superseded it. React's development double-mount closes
+        // the first socket *after* the second is live, and without this guard
+        // its late onclose nulls the ref of the working socket - the chat then
+        // reads as "connected" while every send is silently dropped.
+        if (socketRef.current !== ws) return;
+
         setIsConnected(false);
         socketRef.current = null;
         if (disposed) return;
@@ -52,14 +62,16 @@ export function useChatSocket(chatId: string | undefined, onMessage: (message: C
       disposed = true;
       window.clearTimeout(reconnectTimer);
       socket?.close();
-      socketRef.current = null;
+      if (socketRef.current === socket) socketRef.current = null;
     };
   }, [chatId]);
 
-  function sendMessage(content: string) {
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ content }));
-    }
+  /** Returns false when the socket isn't open, so the caller can keep the draft. */
+  function sendMessage(content: string): boolean {
+    const ws = socketRef.current;
+    if (!ws || ws.readyState !== WebSocket.OPEN) return false;
+    ws.send(JSON.stringify({ content }));
+    return true;
   }
 
   return { isConnected, sendMessage };
