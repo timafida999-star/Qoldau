@@ -11,10 +11,14 @@
     "admin": "Админ",
     "logout": "Выйти",
     "login": "Войти",
-    "signup": "Регистрация"
+    "signup": "Регистрация",
+    "menu": "Меню"
   },
   "errors": {
-    "tooManyRequests": "Слишком много попыток. Подождите минуту и попробуйте снова."
+    "tooManyRequests": "Слишком много попыток. Подождите минуту и попробуйте снова.",
+    "crashTitle": "Что-то пошло не так",
+    "crashBody": "Произошла непредвиденная ошибка. Обычно помогает перезагрузка страницы.",
+    "crashReload": "Перезагрузить страницу"
   },
   "notFound": {
     "title": "Страница не найдена",
@@ -65,7 +69,11 @@
     "empty": "Пока нет объявлений по этим фильтрам.",
     "searchPlaceholder": "Поиск вещей...",
     "loadMore": "Показать ещё",
-    "showingCount": "Показано {{shown}} из {{total}}"
+    "showingCount": "Показано {{shown}} из {{total}}",
+    "nearMe": "Рядом со мной",
+    "radiusOption": "{{km}} км",
+    "geoDenied": "Доступ к геолокации запрещён. Разрешите его в браузере, чтобы использовать фильтр.",
+    "distanceAway": "~{{km}} км"
   },
   "notifications": {
     "title": "Уведомления",
@@ -73,12 +81,12 @@
     "empty": "Уведомлений пока нет.",
     "types": {
       "reservation_requested": "{{actor}} хочет забрать «{{title}}»",
-      "reservation_accepted": "{{actor}} принял ваш запрос на «{{title}}»",
-      "reservation_declined": "{{actor}} отклонил ваш запрос на «{{title}}»",
-      "reservation_cancelled": "{{actor}} отменил свой запрос на «{{title}}»",
+      "reservation_accepted": "Ваш запрос на «{{title}}» принят — {{actor}}",
+      "reservation_declined": "Ваш запрос на «{{title}}» отклонён — {{actor}}",
+      "reservation_cancelled": "Бронь на «{{title}}» отменена — {{actor}}",
       "message_received": "Новое сообщение от {{actor}}",
-      "exchange_completed": "{{actor}} подтвердил передачу «{{title}}» — оставьте отзыв",
-      "review_received": "{{actor}} оставил вам отзыв"
+      "exchange_completed": "Передача «{{title}}» подтверждена — оставьте отзыв",
+      "review_received": "Новый отзыв от {{actor}}"
     }
   },
   "footer": {
@@ -106,7 +114,13 @@
     "trackPrefix": "Отслеживайте на странице",
     "reservationsPage": "ваших броней",
     "reportListing": "Пожаловаться на объявление",
-    "meetingLocation": "Место встречи"
+    "meetingLocation": "Место встречи",
+    "approximateArea": "Показан примерный район.",
+    "exactAfterAccept": "Точное место встречи откроется после подтверждения вашей брони.",
+    "requestMessageLabel": "Почему вещь нужна именно вам?",
+    "requestMessageHint": "Необязательно, но повышает шансы: владелец видит сообщения и выбирает, кому отдать вещь.",
+    "requestMessagePlaceholder": "Например: живу рядом, могу забрать сегодня",
+    "sendRequest": "Отправить запрос"
   },
   "form": {
     "title": "Название",
@@ -138,7 +152,15 @@
     "showQr": "Показать QR",
     "confirmExchange": "Подтвердить передачу",
     "cancelExchange": "Отменить передачу",
-    "confirmCancelExchange": "Отменить эту передачу? Вещь снова станет доступной, а второй участник получит уведомление."
+    "confirmCancelExchange": "Отменить эту передачу? Вещь снова станет доступной, а второй участник получит уведомление.",
+    "pendingHeader": "Ждут вашего решения",
+    "restHeader": "Активные и прошлые",
+    "chooseHint": "Сравните заявки и выберите, кому отдать вещь.",
+    "noMessage": "Без сообщения",
+    "requestCount_one": "{{count}} заявка",
+    "requestCount_few": "{{count}} заявки",
+    "requestCount_many": "{{count}} заявок",
+    "requestCount_other": "{{count}} заявки"
   },
   "chat": {
     "loading": "Загрузка чата...",
@@ -162,7 +184,9 @@
     "confirming": "Подтверждение...",
     "confirmExchange": "Подтвердить передачу",
     "codeMismatch": "Код не совпадает. Попробуйте ещё раз.",
-    "qrAlt": "QR-код передачи"
+    "qrAlt": "QR-код передачи",
+    "copyCode": "Скопировать код",
+    "ownerCodeHint": "Если камера не работает, продиктуйте этот код или отправьте его в чате."
   },
   "qrScanner": {
     "cameraError": "Не удалось получить доступ к камере. Вы можете ввести код вручную.",
@@ -197,7 +221,6 @@
   },
   "profile": {
     "notFound": "Пользователь не найден.",
-    "reviewsSuffix": "отзывов",
     "changePhoto": "Изменить фото",
     "uploading": "Загрузка...",
     "reportUser": "Пожаловаться на пользователя",
@@ -217,7 +240,11 @@
       "given": "Отдано",
       "reviews": "Отзывы ({{count}})"
     },
-    "enterFullName": "Введите имя и фамилию"
+    "enterFullName": "Введите имя и фамилию",
+    "reviewCount_one": "{{count}} отзыв",
+    "reviewCount_few": "{{count}} отзыва",
+    "reviewCount_many": "{{count}} отзывов",
+    "reviewCount_other": "{{count}} отзыва"
   },
   "admin": {
     "title": "Админ — Жалобы",

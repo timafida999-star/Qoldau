@@ -13,8 +13,8 @@ import type { ChatInfo, ChatMessage } from "@/types";
 // Keep in sync with MAX_MESSAGE_CHARS in backend/app/websocket/limits.py
 const MAX_MESSAGE_CHARS = 2000;
 
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleString(undefined, {
+function formatTime(iso: string, locale: string) {
+  return new Date(iso).toLocaleString(locale, {
     month: "short",
     day: "numeric",
     hour: "2-digit",
@@ -25,7 +25,7 @@ function formatTime(iso: string) {
 export default function ChatPage() {
   const { chatId } = useParams();
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -36,6 +36,17 @@ export default function ChatPage() {
   const { sendMessage, isConnected } = useChatSocket(chatId, (message) => {
     setMessages((prev) => [...prev, message]);
   });
+
+  // After a reconnect, refetch the history to fill any messages that arrived
+  // while the socket was down. Skipped on the very first connect.
+  const hadConnectionRef = useRef(false);
+  useEffect(() => {
+    if (!isConnected) return;
+    if (hadConnectionRef.current && chatId) {
+      fetchMessages(chatId).then(setMessages);
+    }
+    hadConnectionRef.current = true;
+  }, [isConnected, chatId]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -68,7 +79,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container flex max-w-2xl flex-col py-8" style={{ height: "calc(100vh - 4rem)" }}>
+    <div className="chat-screen container flex max-w-2xl flex-col py-8">
       <div className="mb-4 flex items-center justify-between border-b border-border pb-4">
         <div>
           <h1 className="font-semibold">{chatInfo.other_participant.full_name}</h1>
@@ -84,9 +95,6 @@ export default function ChatPage() {
           const isMine = message.sender_id === user?.id;
           return (
             <div key={message.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-              {
-                
-              }
               <div
                 className={`min-w-0 max-w-[75%] break-words rounded-2xl px-4 py-2 text-sm shadow-soft ${
                   isMine ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
@@ -94,7 +102,7 @@ export default function ChatPage() {
               >
                 <p>{message.content}</p>
                 <p className={`mt-1 text-[10px] ${isMine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                  {formatTime(message.created_at)}
+                  {formatTime(message.created_at, i18n.language)}
                 </p>
               </div>
             </div>

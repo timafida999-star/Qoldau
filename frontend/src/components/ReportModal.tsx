@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { ReportReason, ReportTargetType } from "@/types";
+import { apiErrorMessage } from "@/lib/apiError";
 
 const REASON_VALUES: ReportReason[] = ["spam", "inappropriate", "fraud", "other"];
 
@@ -42,7 +43,7 @@ export function ReportModal({ targetType, targetId, triggerLabel }: ReportModalP
       await createReport(targetType, targetId, reason, description);
       setSubmitted(true);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || t("report.error"));
+      setError(apiErrorMessage(err, t("report.error")));
     } finally {
       setSubmitting(false);
     }

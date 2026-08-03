@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { StarRating } from "@/components/StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import type { Exchange, PublicUser } from "@/types";
+import { apiErrorMessage } from "@/lib/apiError";
 
 export default function LeaveReviewPage() {
   const { exchangeId } = useParams();
@@ -48,7 +49,7 @@ export default function LeaveReviewPage() {
       await createReview(exchangeId, rating, comment);
       setSubmitted(true);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || t("review.error"));
+      setError(apiErrorMessage(err, t("review.error")));
     } finally {
       setSubmitting(false);
     }

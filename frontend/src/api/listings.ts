@@ -8,6 +8,9 @@ export interface ListingFilters {
   owner?: string;
   page?: number;
   page_size?: number;
+  near_lat?: number;
+  near_lng?: number;
+  radius_km?: number;
 }
 
 export interface ListingInput {

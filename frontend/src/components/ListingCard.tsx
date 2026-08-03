@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Clock, ImageOff, MapPin } from "lucide-react";
+import { Clock, ImageOff, MapPin, Navigation } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-secondary">
           {cover ? (
             <img
-              src={`${API_BASE_URL}${cover.image_url}`}
+              src={`${API_BASE_URL}${cover.thumb_url || cover.image_url}`}
               alt={listing.title}
               className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
             />
@@ -28,12 +28,20 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
               <ImageOff className="h-8 w-8" />
             </div>
           )}
+          {/* Variant backgrounds are translucent tints; over a photo they need
+              a solid backdrop to stay readable, so bg-background wins here. */}
           <Badge
             variant={STATUS_BADGE_VARIANT[listing.status]}
-            className="absolute right-3 top-3 shadow-sm backdrop-blur"
+            className="absolute right-3 top-3 bg-background/90 shadow-sm backdrop-blur"
           >
             {t(`status.${listing.status}`)}
           </Badge>
+          {typeof listing.distance_km === "number" && (
+            <Badge className="absolute left-3 top-3 gap-1 bg-background/90 text-foreground shadow-sm backdrop-blur">
+              <Navigation className="h-3 w-3" />
+              {t("home.distanceAway", { km: listing.distance_km })}
+            </Badge>
+          )}
         </div>
         <CardContent className="space-y-2 p-4">
           <h3 className="line-clamp-1 font-medium">{listing.title}</h3>

@@ -50,9 +50,9 @@ def test_html_disguised_as_image_is_rejected():
 def test_valid_image_stored_with_safe_extension():
     # Real PNG but a misleading .html filename — extension must come from the decoded format.
     upload = _FakeUpload(_png_bytes(), filename="photo.html", content_type="image/png")
-    url = save_upload(upload, "listings")
-    assert url.endswith(".png")
-    assert ".html" not in url
+    stored = save_upload(upload, "listings")
+    assert stored.url.endswith(".png")
+    assert ".html" not in stored.url
 
 
 def test_oversized_upload_is_rejected(monkeypatch):

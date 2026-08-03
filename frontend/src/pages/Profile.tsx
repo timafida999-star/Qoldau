@@ -22,14 +22,14 @@ import type { PublicUser, Review } from "@/types";
 
 type ProfileForm = { full_name: string; phone?: string; bio?: string };
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", year: "numeric" });
+function formatDate(iso: string, locale: string) {
+  return new Date(iso).toLocaleDateString(locale, { month: "short", year: "numeric" });
 }
 
 export default function ProfilePage() {
   const { userId } = useParams();
   const { user: viewer, refreshUser } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isOwnProfile = Boolean(viewer && viewer.id === userId);
 
   const profileSchema = z.object({
@@ -122,7 +122,7 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-semibold">{profile.full_name}</h1>
           <div className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-            {profile.rating_avg.toFixed(1)} ({profile.rating_count} {t("profile.reviewsSuffix")})
+            {profile.rating_avg.toFixed(1)} ({t("profile.reviewCount", { count: profile.rating_count })})
           </div>
           {profile.bio && <p className="mt-2 max-w-md text-sm text-foreground/80">{profile.bio}</p>}
           {isOwnProfile && (
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{review.reviewer.full_name}</span>
-                      <span className="text-xs text-muted-foreground">{formatDate(review.created_at)}</span>
+                      <span className="text-xs text-muted-foreground">{formatDate(review.created_at, i18n.language)}</span>
                     </div>
                     <StarRating value={review.rating} readOnly size={16} />
                     {review.comment && <p className="mt-2 text-sm text-foreground/80">{review.comment}</p>}

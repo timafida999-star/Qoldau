@@ -11,10 +11,14 @@
     "admin": "Admin",
     "logout": "Log out",
     "login": "Log in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "menu": "Menu"
   },
   "errors": {
-    "tooManyRequests": "Too many attempts. Please wait a minute and try again."
+    "tooManyRequests": "Too many attempts. Please wait a minute and try again.",
+    "crashTitle": "Something went wrong",
+    "crashBody": "An unexpected error occurred. Reloading the page usually helps.",
+    "crashReload": "Reload page"
   },
   "notFound": {
     "title": "Page not found",
@@ -65,7 +69,11 @@
     "empty": "No listings match these filters yet.",
     "searchPlaceholder": "Search for items...",
     "loadMore": "Load more",
-    "showingCount": "Showing {{shown}} of {{total}}"
+    "showingCount": "Showing {{shown}} of {{total}}",
+    "nearMe": "Near me",
+    "radiusOption": "{{km}} km",
+    "geoDenied": "Location access was denied. Allow it in the browser to use this filter.",
+    "distanceAway": "~{{km}} km"
   },
   "notifications": {
     "title": "Notifications",
@@ -106,7 +114,13 @@
     "trackPrefix": "Track it on your",
     "reservationsPage": "reservations page",
     "reportListing": "Report this listing",
-    "meetingLocation": "Meeting location"
+    "meetingLocation": "Meeting location",
+    "approximateArea": "Approximate area shown.",
+    "exactAfterAccept": "The exact meeting point appears after your request is accepted.",
+    "requestMessageLabel": "Why should it go to you?",
+    "requestMessageHint": "Optional, but it helps: the owner sees the messages and picks who to give the item to.",
+    "requestMessagePlaceholder": "E.g. I live nearby and can pick it up today",
+    "sendRequest": "Send request"
   },
   "form": {
     "title": "Title",
@@ -138,7 +152,13 @@
     "showQr": "Show QR",
     "confirmExchange": "Confirm exchange",
     "cancelExchange": "Cancel exchange",
-    "confirmCancelExchange": "Cancel this exchange? The item becomes available again and the other person is notified."
+    "confirmCancelExchange": "Cancel this exchange? The item becomes available again and the other person is notified.",
+    "pendingHeader": "Waiting for your decision",
+    "restHeader": "Active and past",
+    "chooseHint": "Compare the requests and choose who gets the item.",
+    "noMessage": "No message",
+    "requestCount_one": "{{count}} request",
+    "requestCount_other": "{{count}} requests"
   },
   "chat": {
     "loading": "Loading chat...",
@@ -162,7 +182,9 @@
     "confirming": "Confirming...",
     "confirmExchange": "Confirm exchange",
     "codeMismatch": "That code doesn't match. Please try again.",
-    "qrAlt": "Exchange QR code"
+    "qrAlt": "Exchange QR code",
+    "copyCode": "Copy code",
+    "ownerCodeHint": "If the camera doesn't work, read this code out loud or send it in the chat."
   },
   "qrScanner": {
     "cameraError": "Could not access the camera. You can enter the code manually instead.",
@@ -197,7 +219,6 @@
   },
   "profile": {
     "notFound": "User not found.",
-    "reviewsSuffix": "reviews",
     "changePhoto": "Change photo",
     "uploading": "Uploading...",
     "reportUser": "Report this user",
@@ -217,7 +238,9 @@
       "given": "Given",
       "reviews": "Reviews ({{count}})"
     },
-    "enterFullName": "Enter your full name"
+    "enterFullName": "Enter your full name",
+    "reviewCount_one": "{{count}} review",
+    "reviewCount_other": "{{count}} reviews"
   },
   "admin": {
     "title": "Admin — Reports",
