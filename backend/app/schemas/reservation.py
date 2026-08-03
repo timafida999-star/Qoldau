@@ -5,11 +5,13 @@ from typing import Literal, Optional
 from pydantic import BaseModel, ConfigDict
 
 from app.models.reservation import ReservationStatus
+from app.schemas.fields import ReservationMessage
 from app.schemas.user import UserPublic
 
 
 class ReservationCreate(BaseModel):
-    pass
+    # A short "why me?" note shown to the owner next to the request.
+    message: Optional[ReservationMessage] = None
 
 
 class ReservationAction(BaseModel):
@@ -31,6 +33,7 @@ class ReservationOut(BaseModel):
     listing: ListingBrief
     requester: UserPublic
     status: ReservationStatus
+    message: Optional[str] = None
     chat_id: Optional[uuid.UUID] = None
     exchange_id: Optional[uuid.UUID] = None
     created_at: datetime

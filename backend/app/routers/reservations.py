@@ -1,5 +1,5 @@
 import uuid
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
@@ -13,7 +13,7 @@ from app.models.listing import Listing, ListingStatus
 from app.models.notification import NotificationType
 from app.models.reservation import Reservation, ReservationStatus
 from app.models.user import User
-from app.schemas.reservation import ListingBrief, ReservationAction, ReservationOut
+from app.schemas.reservation import ListingBrief, ReservationAction, ReservationCreate, ReservationOut
 from app.schemas.user import UserPublic
 from app.utils.notifications import notify
 
@@ -28,6 +28,7 @@ def to_reservation_out(reservation: Reservation, viewer: User) -> ReservationOut
         listing=ListingBrief.model_validate(reservation.listing),
         requester=UserPublic.model_validate(reservation.requester),
         status=reservation.status,
+        message=reservation.message,
         chat_id=reservation.chat.id if reservation.chat else None,
         exchange_id=reservation.exchange.id if reservation.exchange else None,
         created_at=reservation.created_at,
@@ -43,6 +44,7 @@ def to_reservation_out(reservation: Reservation, viewer: User) -> ReservationOut
 def create_reservation(
     request: Request,
     listing_id: uuid.UUID,
+    payload: Optional[ReservationCreate] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -68,7 +70,9 @@ def create_reservation(
     if existing:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You already requested this item")
 
-    reservation = Reservation(listing_id=listing.id, requester_id=current_user.id)
+    # strip_whitespace on the field turns a blank textarea into "" — store NULL instead.
+    message = (payload.message or None) if payload else None
+    reservation = Reservation(listing_id=listing.id, requester_id=current_user.id, message=message)
     db.add(reservation)
 
     notify(

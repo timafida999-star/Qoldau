@@ -32,6 +32,10 @@ AddressText = Annotated[str, _text(max_length=200)]
 Latitude = Annotated[float, Field(ge=-90, le=90)]
 Longitude = Annotated[float, Field(ge=-180, le=180)]
 
+# --- reservations -----------------------------------------------------------
+
+ReservationMessage = Annotated[str, _text(max_length=500)]
+
 # --- free text attached to reviews and reports ------------------------------
 
 Comment = Annotated[str, _text(max_length=1000)]
