@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Clock, ImageOff, MapPin } from "lucide-react";
+import { Clock, ImageOff, MapPin, Navigation } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,12 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
           >
             {t(`status.${listing.status}`)}
           </Badge>
+          {typeof listing.distance_km === "number" && (
+            <Badge variant="secondary" className="absolute left-3 top-3 gap-1 shadow-sm backdrop-blur">
+              <Navigation className="h-3 w-3" />
+              {t("home.distanceAway", { km: listing.distance_km })}
+            </Badge>
+          )}
         </div>
         <CardContent className="space-y-2 p-4">
           <h3 className="line-clamp-1 font-medium">{listing.title}</h3>

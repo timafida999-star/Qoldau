@@ -1,8 +1,11 @@
 import { apiClient } from "./client";
 import type { Reservation } from "@/types";
 
-export async function createReservation(listingId: string): Promise<Reservation> {
-  const { data } = await apiClient.post<Reservation>(`/listings/${listingId}/reservations`);
+export async function createReservation(listingId: string, message?: string): Promise<Reservation> {
+  const { data } = await apiClient.post<Reservation>(
+    `/listings/${listingId}/reservations`,
+    message ? { message } : {}
+  );
   return data;
 }
 

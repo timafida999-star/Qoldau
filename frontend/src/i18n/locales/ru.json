@@ -65,7 +65,11 @@
     "empty": "Пока нет объявлений по этим фильтрам.",
     "searchPlaceholder": "Поиск вещей...",
     "loadMore": "Показать ещё",
-    "showingCount": "Показано {{shown}} из {{total}}"
+    "showingCount": "Показано {{shown}} из {{total}}",
+    "nearMe": "Рядом со мной",
+    "radiusOption": "{{km}} км",
+    "geoDenied": "Доступ к геолокации запрещён. Разрешите его в браузере, чтобы использовать фильтр.",
+    "distanceAway": "~{{km}} км"
   },
   "notifications": {
     "title": "Уведомления",
@@ -106,7 +110,13 @@
     "trackPrefix": "Отслеживайте на странице",
     "reservationsPage": "ваших броней",
     "reportListing": "Пожаловаться на объявление",
-    "meetingLocation": "Место встречи"
+    "meetingLocation": "Место встречи",
+    "approximateArea": "Показан примерный район.",
+    "exactAfterAccept": "Точное место встречи откроется после подтверждения вашей брони.",
+    "requestMessageLabel": "Почему вещь нужна именно вам?",
+    "requestMessageHint": "Необязательно, но повышает шансы: владелец видит сообщения и выбирает, кому отдать вещь.",
+    "requestMessagePlaceholder": "Например: живу рядом, могу забрать сегодня",
+    "sendRequest": "Отправить запрос"
   },
   "form": {
     "title": "Название",
@@ -138,7 +148,15 @@
     "showQr": "Показать QR",
     "confirmExchange": "Подтвердить передачу",
     "cancelExchange": "Отменить передачу",
-    "confirmCancelExchange": "Отменить эту передачу? Вещь снова станет доступной, а второй участник получит уведомление."
+    "confirmCancelExchange": "Отменить эту передачу? Вещь снова станет доступной, а второй участник получит уведомление.",
+    "pendingHeader": "Ждут вашего решения",
+    "restHeader": "Активные и прошлые",
+    "chooseHint": "Сравните заявки и выберите, кому отдать вещь.",
+    "noMessage": "Без сообщения",
+    "requestCount_one": "{{count}} заявка",
+    "requestCount_few": "{{count}} заявки",
+    "requestCount_many": "{{count}} заявок",
+    "requestCount_other": "{{count}} заявки"
   },
   "chat": {
     "loading": "Загрузка чата...",
