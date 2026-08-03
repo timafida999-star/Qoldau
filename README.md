@@ -12,10 +12,10 @@ The UI is available in **English, Russian, and Kazakh**.
 ## Stack
 
 - **Frontend:** React, TypeScript, Vite, React Router, Axios, Tailwind CSS, shadcn/ui-style
-  components, React Hook Form + Zod, Leaflet (OpenStreetMap), jsQR (camera QR scanning),
-  i18next (EN/RU/KK), light/dark theme.
+  components, React Hook Form + Zod, Leaflet (OpenStreetMap) with marker clustering, jsQR
+  (camera QR scanning), i18next (EN/RU/KK), light/dark theme, route-level code splitting.
 - **Backend:** FastAPI, SQLAlchemy, PostgreSQL, Alembic, JWT auth, WebSockets (chat), qrcode,
-  Pillow (image validation), slowapi (rate limiting).
+  Pillow (image validation + thumbnails), slowapi (rate limiting).
 - **DevOps:** Docker Compose (Postgres + backend + frontend).
 
 ## Quick start (Docker)
@@ -45,7 +45,7 @@ Postgres has a `pg_isready` healthcheck, and the backend waits for it before sta
 
 ## Environment variables
 
-Copy the `.env.example` files and adjust. Each variable is documented in the example files.
+Copy the `.env.example` files and adjust — they list every variable you need to set.
 
 **`backend/.env`**
 
@@ -87,7 +87,7 @@ npm run dev
 
 ## Testing
 
-The backend has a pytest suite of **108 tests**. They run against a dedicated `qoldau_test`
+The backend has a pytest suite of **133 tests**. They run against a dedicated `qoldau_test`
 database, and each test is wrapped in a transaction that is rolled back afterwards, so they are
 fully isolated and leave no data behind.
 
@@ -125,8 +125,9 @@ backend/app/
   schemas/    Pydantic request/response models
   auth/       JWT + password hashing + auth dependencies
   database/   engine/session/declarative base
-  websocket/  chat connection manager + WS route
-  utils/      file upload/validation, QR code generation, notifications
+  websocket/  chat connection manager, WS route, message size/rate limits
+  utils/      file upload/validation/thumbnails, QR code generation, notifications,
+              geo.py (distance + meeting-point privacy)
   rate_limit.py, config.py, main.py
 backend/tests/   pytest suite
 
@@ -135,6 +136,7 @@ frontend/src/
   components/  shared UI (incl. components/ui = shadcn-style primitives)
   api/         axios calls per resource
   hooks/       useAuth, useChatSocket, useTheme
+  lib/         apiError (normalises API errors), leaflet icons, helpers
   i18n/        translations (en, ru, kk)
   types/       shared TypeScript types
   utils/       label maps, time formatting
@@ -144,18 +146,29 @@ frontend/src/
 
 **Auth** — register, login, logout, JWT, edit profile, avatar upload. Rate-limited login/register.
 
-**Listings** — create/edit/delete, multi-image upload (validated + re-encoded), category +
-condition, map location picker (Leaflet), status (available/reserved/completed), search + pagination.
+**Listings** — create/edit/delete, multi-image upload (validated, re-encoded, thumbnailed),
+category + condition, map location picker (Leaflet), status (available/reserved/completed),
+search + pagination.
 
-**Home** — grid and map views, filter by category and status, text search, "load more" pagination.
+**Home** — grid and map views, filter by category and status, text search, "near me" filter with a
+radius, marker clustering on the map, "load more" pagination.
 
-**Reservations** — request to reserve, owner accepts/declines, requester cancels; accepting
-auto-creates a chat and a QR exchange, and auto-declines other pending requests on that listing.
+**Meeting-point privacy** — the exact location is only revealed to the owner and to a requester
+whose request was accepted. Everyone else sees a deterministically offset point inside a ~500 m
+circle, so the map never becomes a directory of home addresses. The radius filter still measures
+distance against the real coordinates, so results stay accurate.
 
-**Chat** — real-time WebSocket messaging per reservation, message history, timestamps.
+**Reservations** — request to reserve with an optional "why me?" message; the owner compares the
+requests side by side (message, rating, review count) and picks a recipient. Accepting auto-creates
+a chat and an exchange, and auto-declines the other pending requests. Either side can cancel an
+accepted reservation until the handoff, which returns the listing to available.
 
-**QR exchange** — owner shows a generated QR code; recipient confirms via live camera scan (jsQR)
-or manual code entry, which marks the exchange (and listing) completed.
+**Chat** — real-time WebSocket messaging per reservation, message history, timestamps, automatic
+reconnect on connection loss, message size and rate limits.
+
+**Exchange confirmation** — owner shows a generated QR code; recipient confirms via live camera
+scan (jsQR) or by entering the code, which marks the exchange (and listing) completed. The code is
+also available as copyable text for when the camera isn't usable.
 
 **Reviews** — 1–5 star rating + comment after a completed exchange; updates the reviewee's cached
 average rating; shown on profile pages.
@@ -168,3 +181,7 @@ resolve reports, and delete inappropriate listings.
 **Profile** — public profiles with tabs (Listings / Given / Reviews), avatar, bio, rating.
 
 **Internationalisation** — full UI in English, Russian, and Kazakh, with a language switcher.
+
+**Interface resilience** — responsive layout with a burger menu on mobile, a 404 page for unknown
+routes, and an error boundary so a failure on one page leaves the rest of the site usable instead
+of blanking the screen.
