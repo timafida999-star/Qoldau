@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { CheckCircle2, QrCode } from "lucide-react";
+import { Check, CheckCircle2, Copy, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 import { fetchExchange, fetchExchangeQrImage, verifyExchange } from "@/api/exchanges";
 import { Button } from "@/components/ui/button";
@@ -10,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { QrScanner } from "@/components/QrScanner";
 import type { Exchange } from "@/types";
+import { apiErrorMessage } from "@/lib/apiError";
 
 export default function ExchangePage() {
   const { exchangeId } = useParams();
@@ -21,6 +24,18 @@ export default function ExchangePage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  async function handleCopyCode() {
+    if (!exchange?.qr_code) return;
+    try {
+      await navigator.clipboard.writeText(exchange.qr_code);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      // Clipboard can be unavailable (http, permissions) — the code is still selectable text.
+    }
+  }
 
   useEffect(() => {
     if (!exchangeId) return;
@@ -36,12 +51,19 @@ export default function ExchangePage() {
 
   async function handleVerify(code: string) {
     setError(null);
+    const normalized = code.trim();
+    // The backend expects a UUID; anything else would come back as a 422
+    // validation error, so reject it client-side with a friendly message.
+    if (!UUID_RE.test(normalized)) {
+      setError(t("exchange.codeMismatch"));
+      return;
+    }
     setVerifying(true);
     try {
-      const updated = await verifyExchange(code.trim());
+      const updated = await verifyExchange(normalized);
       setExchange(updated);
     } catch (err: any) {
-      setError(err?.response?.data?.detail || t("exchange.codeMismatch"));
+      setError(apiErrorMessage(err, t("exchange.codeMismatch")));
     } finally {
       setVerifying(false);
     }
@@ -89,6 +111,21 @@ export default function ExchangePage() {
               )}
             </CardContent>
           </Card>
+
+          {exchange.qr_code && (
+            <div className="mt-4 space-y-2">
+              <Label>{t("exchange.confirmationCode")}</Label>
+              <div className="flex items-center gap-2">
+                <code className="min-w-0 flex-1 select-all break-all rounded-lg border border-border bg-secondary px-3 py-2 font-mono text-sm">
+                  {exchange.qr_code}
+                </code>
+                <Button variant="outline" size="icon" onClick={handleCopyCode} aria-label={t("exchange.copyCode")}>
+                  {codeCopied ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">{t("exchange.ownerCodeHint")}</p>
+            </div>
+          )}
         </>
       ) : (
         <>

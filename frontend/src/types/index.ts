@@ -59,6 +59,8 @@ export type ListingStatus = "available" | "reserved" | "completed";
 export interface ListingImage {
   id: string;
   image_url: string;
+  /** Smaller copy for cards; null for images uploaded before thumbnails existed. */
+  thumb_url?: string | null;
   position: number;
 }
 
@@ -73,6 +75,8 @@ export interface Listing {
   status: ListingStatus;
   latitude: number;
   longitude: number;
+  /** Coordinates are blurred until the viewer's reservation is accepted. */
+  location_is_approximate: boolean;
   address_text?: string | null;
   images: ListingImage[];
   created_at: string;
@@ -87,6 +91,9 @@ export interface ListingSummary {
   status: ListingStatus;
   latitude: number;
   longitude: number;
+  location_is_approximate: boolean;
+  /** Present only when the "near me" filter is active. */
+  distance_km?: number | null;
   address_text?: string | null;
   images: ListingImage[];
   created_at: string;
@@ -113,6 +120,8 @@ export interface Reservation {
   listing: ListingBrief;
   requester: PublicUser;
   status: ReservationStatus;
+  /** Optional "why me?" note the requester attached to the request. */
+  message?: string | null;
   chat_id: string | null;
   exchange_id: string | null;
   created_at: string;
@@ -149,6 +158,8 @@ export interface Exchange {
   owner_id: string;
   requester_id: string;
   role: "owner" | "requester";
+  /** Confirmation code as text; present only when the viewer is the owner. */
+  qr_code?: string | null;
 }
 
 export interface Review {

@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { apiErrorMessage } from "@/lib/apiError";
 
 type LoginForm = { email: string; password: string };
 
@@ -39,7 +40,7 @@ export default function LoginPage() {
       if (err?.response?.status === 429) {
         setServerError(t("errors.tooManyRequests"));
       } else {
-        setServerError(err?.response?.data?.detail || t("auth.loginFailed"));
+        setServerError(apiErrorMessage(err, t("auth.loginFailed")));
       }
     }
   }

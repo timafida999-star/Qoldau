@@ -1,7 +1,7 @@
 import enum
 import uuid
 
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -35,18 +35,21 @@ class ListingStatus(str, enum.Enum):
 
 class Listing(Base):
     __tablename__ = "listings"
+    # The home feed filters by category/status/owner and orders by created_at;
+    # the near-me filter prefilters on the lat/lng bounding box.
+    __table_args__ = (Index("ix_listings_lat_lng", "latitude", "longitude"),)
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=False)
-    category = Column(pg_enum(Category), nullable=False)
+    category = Column(pg_enum(Category), nullable=False, index=True)
     condition = Column(pg_enum(Condition), nullable=False)
-    status = Column(pg_enum(ListingStatus), default=ListingStatus.AVAILABLE, nullable=False)
+    status = Column(pg_enum(ListingStatus), default=ListingStatus.AVAILABLE, nullable=False, index=True)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     address_text = Column(String, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     owner = relationship("User", back_populates="listings")
@@ -60,6 +63,9 @@ class ListingImage(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     listing_id = Column(UUID(as_uuid=True), ForeignKey("listings.id", ondelete="CASCADE"), nullable=False)
     image_url = Column(String, nullable=False)
+    # Smaller copy for grid cards; nullable because rows uploaded before the
+    # column existed have no thumbnail (the frontend falls back to image_url).
+    thumb_url = Column(String, nullable=True)
     position = Column(Integer, default=0, nullable=False)
 
     listing = relationship("Listing", back_populates="images")

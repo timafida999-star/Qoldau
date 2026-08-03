@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Gift, LayoutGrid, Loader2, Map as MapIcon, Search } from "lucide-react";
+import { Gift, LayoutGrid, Loader2, Map as MapIcon, Navigation, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -34,6 +34,34 @@ export default function HomePage() {
   const [status, setStatus] = useState<ListingStatus | "all">("available");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [near, setNear] = useState<{ lat: number; lng: number } | null>(null);
+  const [radius, setRadius] = useState(5);
+  const [locating, setLocating] = useState(false);
+  const [geoDenied, setGeoDenied] = useState(false);
+
+  function toggleNearMe() {
+    if (near) {
+      setNear(null);
+      return;
+    }
+    if (!navigator.geolocation) {
+      setGeoDenied(true);
+      return;
+    }
+    setGeoDenied(false);
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setNear({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocating(false);
+      },
+      () => {
+        setGeoDenied(true);
+        setLocating(false);
+      },
+      { timeout: 10000, maximumAge: 60000 }
+    );
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search.trim()), 350);
@@ -48,6 +76,9 @@ export default function HomePage() {
       category: category === "all" ? undefined : category,
       status: status === "all" ? undefined : status,
       search: debouncedSearch || undefined,
+      near_lat: near?.lat,
+      near_lng: near?.lng,
+      radius_km: near ? radius : undefined,
       page: 1,
       page_size: PAGE_SIZE,
     })
@@ -62,7 +93,7 @@ export default function HomePage() {
     return () => {
       active = false;
     };
-  }, [category, status, debouncedSearch]);
+  }, [category, status, debouncedSearch, near, radius]);
 
   async function loadMore() {
     const nextPage = page + 1;
@@ -72,6 +103,9 @@ export default function HomePage() {
         category: category === "all" ? undefined : category,
         status: status === "all" ? undefined : status,
         search: debouncedSearch || undefined,
+        near_lat: near?.lat,
+        near_lng: near?.lng,
+        radius_km: near ? radius : undefined,
         page: nextPage,
         page_size: PAGE_SIZE,
       });
@@ -135,6 +169,29 @@ export default function HomePage() {
                 </option>
               ))}
             </Select>
+            <button
+              onClick={toggleNearMe}
+              disabled={locating}
+              className={cn(
+                "flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
+                near ? "border-primary bg-accent text-primary" : "border-input text-muted-foreground hover:bg-secondary"
+              )}
+            >
+              {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />}
+              {t("home.nearMe")}
+            </button>
+            {near && (
+              <Select value={String(radius)} onChange={(e) => setRadius(Number(e.target.value))} className="w-28">
+                {[1, 3, 5, 10, 25].map((km) => (
+                  <option key={km} value={km}>
+                    {t("home.radiusOption", { km })}
+                  </option>
+                ))}
+              </Select>
+            )}
+            {geoDenied && (
+              <p className="self-center text-xs text-destructive">{t("home.geoDenied")}</p>
+            )}
           </div>
 
           <div className="flex gap-2">

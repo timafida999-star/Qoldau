@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ImageOff, MapPin, Pencil, Star, Trash2 } from "lucide-react";
+import { ImageOff, Info, MapPin, Pencil, Send, Star, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { API_BASE_URL } from "@/api/client";
@@ -9,13 +9,21 @@ import { createReservation } from "@/api/reservations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { ReportModal } from "@/components/ReportModal";
 import { useAuth } from "@/hooks/useAuth";
+import { apiErrorMessage } from "@/lib/apiError";
 import type { Listing } from "@/types";
 import { STATUS_BADGE_VARIANT } from "@/utils/listingOptions";
 
 import "@/lib/leafletIcons";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import { Circle, MapContainer, Marker, TileLayer } from "react-leaflet";
+
+// Matches UNCERTAINTY_RADIUS_M in backend/app/utils/geo.py: the blurred point
+// is always within this circle of the true meeting spot.
+const APPROX_RADIUS_M = 500;
+const REQUEST_MESSAGE_MAX = 500;
 
 export default function ListingDetailPage() {
   const { listingId } = useParams();
@@ -29,6 +37,8 @@ export default function ListingDetailPage() {
   const [reserveError, setReserveError] = useState<string | null>(null);
   const [reserveSent, setReserveSent] = useState(false);
   const [reserving, setReserving] = useState(false);
+  const [requestFormOpen, setRequestFormOpen] = useState(false);
+  const [requestMessage, setRequestMessage] = useState("");
 
   useEffect(() => {
     if (!listingId) return;
@@ -49,10 +59,11 @@ export default function ListingDetailPage() {
     setReserveError(null);
     setReserving(true);
     try {
-      await createReservation(listing.id);
+      await createReservation(listing.id, requestMessage.trim() || undefined);
       setReserveSent(true);
+      setRequestFormOpen(false);
     } catch (err: any) {
-      setReserveError(err?.response?.data?.detail || t("listing.reserveError"));
+      setReserveError(apiErrorMessage(err, t("listing.reserveError")));
     } finally {
       setReserving(false);
     }
@@ -92,7 +103,7 @@ export default function ListingDetailPage() {
                     index === activeImage ? "border-primary" : "border-transparent"
                   }`}
                 >
-                  <img src={`${API_BASE_URL}${img.image_url}`} alt="" className="h-full w-full object-contain" />
+                  <img src={`${API_BASE_URL}${img.thumb_url || img.image_url}`} alt="" className="h-full w-full object-contain" />
                 </button>
               ))}
             </div>
@@ -152,9 +163,15 @@ export default function ListingDetailPage() {
               </>
             ) : listing.status === "available" ? (
               user ? (
-                <Button size="lg" disabled={reserving || reserveSent} onClick={handleReserve}>
-                  {reserveSent ? t("listing.requestSent") : reserving ? t("listing.sending") : t("listing.reserve")}
-                </Button>
+                !requestFormOpen && (
+                  <Button
+                    size="lg"
+                    disabled={reserving || reserveSent}
+                    onClick={() => setRequestFormOpen(true)}
+                  >
+                    {reserveSent ? t("listing.requestSent") : t("listing.reserve")}
+                  </Button>
+                )
               ) : (
                 <Button size="lg" onClick={() => navigate("/login")}>
                   {t("listing.loginToReserve")}
@@ -166,6 +183,39 @@ export default function ListingDetailPage() {
               </Button>
             )}
           </div>
+          {requestFormOpen && !reserveSent && (
+            <Card className="mt-4">
+              <CardContent className="space-y-3 p-4">
+                <div className="space-y-1">
+                  <Label htmlFor="request-message">{t("listing.requestMessageLabel")}</Label>
+                  <p className="text-xs text-muted-foreground">{t("listing.requestMessageHint")}</p>
+                </div>
+                <Textarea
+                  id="request-message"
+                  value={requestMessage}
+                  onChange={(e) => setRequestMessage(e.target.value)}
+                  placeholder={t("listing.requestMessagePlaceholder")}
+                  maxLength={REQUEST_MESSAGE_MAX}
+                  rows={3}
+                  autoFocus
+                />
+                {requestMessage.length > REQUEST_MESSAGE_MAX * 0.9 && (
+                  <p className="text-right text-xs text-muted-foreground">
+                    {requestMessage.length} / {REQUEST_MESSAGE_MAX}
+                  </p>
+                )}
+                <div className="flex gap-2">
+                  <Button disabled={reserving} onClick={handleReserve}>
+                    <Send className="mr-2 h-4 w-4" />
+                    {reserving ? t("listing.sending") : t("listing.sendRequest")}
+                  </Button>
+                  <Button variant="ghost" disabled={reserving} onClick={() => setRequestFormOpen(false)}>
+                    {t("common.cancel")}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           {reserveError && <p className="mt-2 text-sm text-destructive">{reserveError}</p>}
           {reserveSent && (
             <p className="mt-2 text-sm text-muted-foreground">
@@ -191,6 +241,14 @@ export default function ListingDetailPage() {
           {t("listing.meetingLocation")}
         </h2>
         {listing.address_text && <p className="mb-3 text-sm text-muted-foreground">{listing.address_text}</p>}
+        {listing.location_is_approximate && (
+          <div className="mb-3 flex items-start gap-2 rounded-lg border border-border bg-accent/50 px-3 py-2 text-sm text-muted-foreground">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>
+              {t("listing.approximateArea")} {t("listing.exactAfterAccept")}
+            </span>
+          </div>
+        )}
         <div className="overflow-hidden rounded-xl border border-border shadow-soft">
           <MapContainer
             center={[listing.latitude, listing.longitude]}
@@ -201,7 +259,15 @@ export default function ListingDetailPage() {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={[listing.latitude, listing.longitude]} />
+            {listing.location_is_approximate ? (
+              <Circle
+                center={[listing.latitude, listing.longitude]}
+                radius={APPROX_RADIUS_M}
+                pathOptions={{ color: "hsl(152 55% 40%)", fillOpacity: 0.15, weight: 2 }}
+              />
+            ) : (
+              <Marker position={[listing.latitude, listing.longitude]} />
+            )}
           </MapContainer>
         </div>
       </div>
