@@ -32,7 +32,8 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
-    "somethingWrong": "Something went wrong. Please try again."
+    "somethingWrong": "Something went wrong. Please try again.",
+    "retry": "Try again"
   },
   "auth": {
     "emailLabel": "Email",
@@ -55,7 +56,8 @@
     "invalidEmail": "Enter a valid email",
     "shortPassword": "Password must be at least 8 characters",
     "enterPassword": "Enter your password",
-    "enterFullName": "Enter your full name"
+    "enterFullName": "Enter your full name",
+    "sessionExpired": "Your session has expired. Please log in again."
   },
   "home": {
     "title": "Find something useful nearby",
@@ -166,7 +168,14 @@
     "about": "About: {{title}}",
     "connected": "Connected",
     "connecting": "Connecting...",
-    "placeholder": "Write a message..."
+    "placeholder": "Write a message...",
+    "reconnecting": "Reconnecting...",
+    "connectionLost": "Connection lost. You can send messages again once it is restored.",
+    "reconnectNow": "Reconnect now",
+    "forbidden": "You are not a participant of this chat.",
+    "loadError": "Could not load the chat. Check your connection and try again.",
+    "backToReservations": "Back to reservations",
+    "send": "Send"
   },
   "exchange": {
     "notFound": "Exchange not found.",

@@ -10,3 +10,9 @@ export function apiErrorMessage(err: unknown, fallback: string): string {
   const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
   return typeof detail === "string" && detail.trim() ? detail : fallback;
 }
+
+/** HTTP status of an Axios error; undefined for network errors and non-HTTP failures. */
+export function apiErrorStatus(err: unknown): number | undefined {
+  const status = (err as { response?: { status?: unknown } })?.response?.status;
+  return typeof status === "number" ? status : undefined;
+}
