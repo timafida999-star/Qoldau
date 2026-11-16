@@ -17,6 +17,10 @@ from app.websocket.manager import manager
 
 router = APIRouter(prefix="/chats", tags=["chat"])
 
+WS_CLOSE_UNAUTHORIZED = 4401
+WS_CLOSE_FORBIDDEN = 4403
+WS_CLOSE_NOT_FOUND = 4404
+
 
 def get_chat_or_404(chat_id: uuid.UUID, db: Session) -> Chat:
     chat = db.query(Chat).filter(Chat.id == chat_id).first()
@@ -65,6 +69,14 @@ def get_messages(chat_id: uuid.UUID, current_user: User = Depends(get_current_us
 ws_router = APIRouter(tags=["chat"])
 
 
+async def reject_websocket(websocket: WebSocket, code: int) -> None:
+    # Closing before accept() turns into a bare HTTP 403 on the handshake, and
+    # the browser then only sees close code 1006. Accept first so the client
+    # receives the application close code.
+    await websocket.accept()
+    await websocket.close(code=code)
+
+
 @ws_router.websocket("/ws/chats/{chat_id}")
 async def chat_websocket(websocket: WebSocket, chat_id: uuid.UUID, token: str = Query(...)):
     db = SessionLocal()
@@ -76,15 +88,18 @@ async def chat_websocket(websocket: WebSocket, chat_id: uuid.UUID, token: str = 
                 user = db.query(User).filter(User.id == uuid.UUID(raw_user_id)).first()
             except ValueError:
                 user = None
-        chat = db.query(Chat).filter(Chat.id == chat_id).first()
+        if not user:
+            await reject_websocket(websocket, WS_CLOSE_UNAUTHORIZED)
+            return
 
-        if not user or not chat:
-            await websocket.close(code=4401)
+        chat = db.query(Chat).filter(Chat.id == chat_id).first()
+        if not chat:
+            await reject_websocket(websocket, WS_CLOSE_NOT_FOUND)
             return
 
         owner_id, requester_id = get_participant_ids(chat)
         if user.id not in (owner_id, requester_id):
-            await websocket.close(code=4403)
+            await reject_websocket(websocket, WS_CLOSE_FORBIDDEN)
             return
 
         await manager.connect(chat_id, websocket)

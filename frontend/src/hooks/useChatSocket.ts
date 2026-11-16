@@ -5,18 +5,39 @@ import type { ChatMessage } from "@/types";
 
 const MAX_RECONNECT_DELAY_MS = 15_000;
 
+// Keep in sync with WS_CLOSE_* in backend/app/routers/chat.py
+const CLOSE_UNAUTHORIZED = 4401;
+const CLOSE_FORBIDDEN = 4403;
+const CLOSE_NOT_FOUND = 4404;
+
+export type ChatSocketStatus =
+  | "idle"
+  | "connecting"
+  | "open"
+  | "reconnecting"
+  | "unauthorized"
+  | "forbidden"
+  | "notFound";
+
+const FINAL_STATUS_BY_CLOSE_CODE: Partial<Record<number, ChatSocketStatus>> = {
+  [CLOSE_UNAUTHORIZED]: "unauthorized",
+  [CLOSE_FORBIDDEN]: "forbidden",
+  [CLOSE_NOT_FOUND]: "notFound",
+};
+
 export function useChatSocket(chatId: string | undefined, onMessage: (message: ChatMessage) => void) {
-  const [isConnected, setIsConnected] = useState(false);
+  const [status, setStatus] = useState<ChatSocketStatus>("idle");
   const socketRef = useRef<WebSocket | null>(null);
+  const reconnectNowRef = useRef<() => void>(() => undefined);
   const onMessageRef = useRef(onMessage);
   onMessageRef.current = onMessage;
 
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId) {
+      setStatus("idle");
+      return;
+    }
 
-    // A dropped connection (backend restart, flaky network, laptop sleep) used
-    // to kill the chat until a manual page reload. Reconnect with exponential
-    // backoff instead; the cleanup flag stops the loop on unmount.
     let disposed = false;
     let attempt = 0;
     let reconnectTimer: number | undefined;
@@ -24,43 +45,68 @@ export function useChatSocket(chatId: string | undefined, onMessage: (message: C
 
     function connect() {
       if (disposed) return;
+      window.clearTimeout(reconnectTimer);
+      reconnectTimer = undefined;
+
       const token = getAuthToken();
-      // Bound to this attempt: `socket` below is reassigned on every reconnect,
-      // so the handlers must close over their own instance, not the latest one.
-      const ws = new WebSocket(wsUrl(`/ws/chats/${chatId}?token=${token}`));
+      if (!token) {
+        setStatus("unauthorized");
+        return;
+      }
+
+      setStatus(attempt === 0 ? "connecting" : "reconnecting");
+      const ws = new WebSocket(wsUrl(`/ws/chats/${chatId}?token=${encodeURIComponent(token)}`));
       socket = ws;
       socketRef.current = ws;
 
       ws.onopen = () => {
+        if (socketRef.current !== ws) return;
         attempt = 0;
-        setIsConnected(true);
+        setStatus("open");
       };
       ws.onmessage = (event) => {
-        const message: ChatMessage = JSON.parse(event.data);
+        let message: ChatMessage;
+        try {
+          message = JSON.parse(event.data);
+        } catch {
+          return;
+        }
         onMessageRef.current(message);
       };
-      ws.onclose = () => {
-        // A socket that has already been replaced must not touch the state of
-        // the one that superseded it. React's development double-mount closes
-        // the first socket *after* the second is live, and without this guard
-        // its late onclose nulls the ref of the working socket - the chat then
-        // reads as "connected" while every send is silently dropped.
+      ws.onclose = (event) => {
+        // React's development double mount closes the first socket after the
+        // second one is live; a superseded socket must not touch the state.
         if (socketRef.current !== ws) return;
-
-        setIsConnected(false);
         socketRef.current = null;
         if (disposed) return;
+
+        const finalStatus = FINAL_STATUS_BY_CLOSE_CODE[event.code];
+        if (finalStatus) {
+          setStatus(finalStatus);
+          return;
+        }
+
+        setStatus("reconnecting");
         const delay = Math.min(1000 * 2 ** attempt, MAX_RECONNECT_DELAY_MS) + Math.random() * 300;
         attempt += 1;
         reconnectTimer = window.setTimeout(connect, delay);
       };
     }
 
+    function reconnectNow() {
+      if (disposed || reconnectTimer === undefined) return;
+      connect();
+    }
+
+    reconnectNowRef.current = reconnectNow;
+    window.addEventListener("online", reconnectNow);
     connect();
 
     return () => {
       disposed = true;
       window.clearTimeout(reconnectTimer);
+      window.removeEventListener("online", reconnectNow);
+      reconnectNowRef.current = () => undefined;
       socket?.close();
       if (socketRef.current === socket) socketRef.current = null;
     };
@@ -74,5 +120,9 @@ export function useChatSocket(chatId: string | undefined, onMessage: (message: C
     return true;
   }
 
-  return { isConnected, sendMessage };
+  function reconnectNow() {
+    reconnectNowRef.current();
+  }
+
+  return { status, sendMessage, reconnectNow };
 }

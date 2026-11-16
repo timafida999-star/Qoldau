@@ -9,9 +9,13 @@ receive again until the process restarted.
 """
 import asyncio
 import uuid
+from datetime import datetime, timedelta, timezone
 
 import pytest
+from jose import jwt
+from starlette.websockets import WebSocketDisconnect
 
+from app.config import settings
 from app.routers import chat as chat_router
 from app.websocket.manager import ChatConnectionManager
 
@@ -152,5 +156,71 @@ def test_disconnect_removes_the_socket_from_the_room(client, chat_room, ws_sessi
 
     with _connect(client, chat_room, "owner"):
         assert len(chat_router.manager.active_connections.get(chat_id, [])) == 1
+
+    assert chat_id not in chat_router.manager.active_connections
+
+
+# --- rejected handshakes: the close code must reach the client --------------
+#
+# Closing before ``accept()`` makes uvicorn answer the handshake with a bare
+# HTTP 403, so a browser only ever sees close code 1006 and cannot tell an
+# expired session from a network failure. Each rejection must therefore be an
+# accepted socket that is then closed with an application code.
+
+
+def _assert_closed_after_accept(client, url: str, expected_code: int) -> None:
+    with client.websocket_connect(url) as ws:
+        with pytest.raises(WebSocketDisconnect) as closed:
+            ws.receive_json()
+    assert closed.value.code == expected_code
+
+
+def _token(sub: str, expires_in: timedelta) -> str:
+    payload = {"sub": sub, "exp": datetime.now(timezone.utc) + expires_in}
+    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+
+
+def test_garbage_token_is_closed_with_4401(client, chat_room, ws_session):
+    _assert_closed_after_accept(
+        client, f"/ws/chats/{chat_room['chat_id']}?token=not-a-jwt", chat_router.WS_CLOSE_UNAUTHORIZED
+    )
+
+
+def test_expired_token_is_closed_with_4401(client, chat_room, ws_session):
+    expired = _token(chat_room["owner"]["id"], timedelta(minutes=-1))
+    _assert_closed_after_accept(
+        client, f"/ws/chats/{chat_room['chat_id']}?token={expired}", chat_router.WS_CLOSE_UNAUTHORIZED
+    )
+
+
+def test_token_of_unknown_user_is_closed_with_4401(client, chat_room, ws_session):
+    ghost = _token(str(uuid.uuid4()), timedelta(minutes=5))
+    _assert_closed_after_accept(
+        client, f"/ws/chats/{chat_room['chat_id']}?token={ghost}", chat_router.WS_CLOSE_UNAUTHORIZED
+    )
+
+
+def test_non_participant_is_closed_with_4403(client, chat_room, make_user, ws_session):
+    stranger = make_user()
+    _assert_closed_after_accept(
+        client, f"/ws/chats/{chat_room['chat_id']}?token={stranger['token']}", chat_router.WS_CLOSE_FORBIDDEN
+    )
+
+
+def test_missing_chat_is_closed_with_4404(client, chat_room, ws_session):
+    _assert_closed_after_accept(
+        client,
+        f"/ws/chats/{uuid.uuid4()}?token={chat_room['owner']['token']}",
+        chat_router.WS_CLOSE_NOT_FOUND,
+    )
+
+
+def test_rejected_socket_never_joins_the_room(client, chat_room, make_user, ws_session):
+    chat_id = uuid.UUID(chat_room["chat_id"])
+    stranger = make_user()
+
+    _assert_closed_after_accept(
+        client, f"/ws/chats/{chat_id}?token={stranger['token']}", chat_router.WS_CLOSE_FORBIDDEN
+    )
 
     assert chat_id not in chat_router.manager.active_connections
