@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
@@ -17,8 +17,10 @@ type LoginForm = { email: string; password: string };
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const [serverError, setServerError] = useState<string | null>(null);
+  const sessionExpired = (location.state as { sessionExpired?: boolean } | null)?.sessionExpired === true;
 
   const loginSchema = z.object({
     email: z.string().email(t("auth.invalidEmail")),
@@ -53,6 +55,11 @@ export default function LoginPage() {
           <CardDescription>{t("auth.loginSubtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
+          {sessionExpired && (
+            <p role="status" className="mb-4 rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-secondary-foreground">
+              {t("auth.sessionExpired")}
+            </p>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{t("auth.emailLabel")}</Label>
